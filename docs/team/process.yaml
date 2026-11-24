@@ -36,7 +36,7 @@ architecture:
 
 standards:
   file: docs/engineering-standards.md   # derived from the architecture; its architecture_version must match
-  enforce_in_lint: [PLR0913, PLR0915]       # rule names added to the linter, chosen with the owner
+  enforce_in_lint: [PLR0913, PLR0915, C901]       # rule names added to the linter, chosen with the owner
 
 # --- Who is on the team ----------------------------------------------------
 team:
