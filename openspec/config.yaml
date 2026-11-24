@@ -1,0 +1,93 @@
+schema: spec-driven
+
+context: |
+  Project: NovaMart RAG assistant prototype. Python, Google ADK, Gemini.
+  Interaction is through `adk web` / `adk run` only. There is no custom
+  frontend; do not propose one.
+  Docs source of truth: Google ADK documentation (adk.dev; VERIFY the
+  current URL, the docs have moved before). During exploration, ALWAYS
+  consult the ADK docs before proposing agent, tool, session-state,
+  callback, eval or deployment designs. Never rely on memory for ADK APIs,
+  model IDs or product names; mark unconfirmed claims VERIFY.
+  Backend layout (standard Python src layout):
+    backend/pyproject.toml
+    backend/src/<agent_pkg>/   ADK agent package; agent.py exposes root_agent
+                               (wiring only); tools/, callbacks or security/,
+                               prompts.py, data access in separate modules
+    backend/tests/             pytest, mirrors src/<agent_pkg>/
+    backend/evals/             ADK *.evalset.json + test_config.json, custom
+                               content checks, results/
+    backend/data/              synthetic data only
+  Run the agent with `adk web backend/src`. Typed code, config via
+  environment, no secrets in the repo.
+  Product-team operating rules (rendered from docs/team/process.yaml):
+  - Read CLAUDE.md and docs/engineering-standards.md first; the standards
+    are binding and code-reviewer cites their rule IDs.
+  - docs/architecture.md drives the code. Change the architecture only by
+    proposal, and re-derive the standards in the same proposal.
+  - Pinned stack, agents must not change it: Python, Google ADK, Gemini
+    (free AI Studio key), hand-rolled numpy retrieval, synthetic data only,
+    run via adk web / adk run. Excluded: Vertex AI Search, RAG Engine,
+    Gemini File Search.
+  - Each agent's write scope and return shape are set in
+    docs/team/guardrails.yaml; stay inside the scope.
+  - Gates at the end of each chunk: code-reviewer and qa-engineer always
+    (plus security-compliance for api/auth/secrets/personal-data chunks).
+    Findings at or above "major" fail the gate; at most 3 fix cycles, then
+    stop and report. Stop at each chunk boundary and wait for the owner.
+
+rules:
+  specs:
+    - Every requirement needs at least one testable scenario.
+    - Any requirement about agent behavior (tool use, refusal, access
+      control, grounding) needs a scenario that maps to an eval case.
+  design:
+    - Cite the ADK doc page behind each agent/tool/callback decision;
+      mark anything not confirmed against the docs as VERIFY.
+    - Include a file-structure section that follows the backend layout in context.
+    # product-team:begin (generated from docs/team/process.yaml; edit that file and re-run setup-workflow sync)
+    - "Consult the architect agent for every change and record its decision in design.md. The stack is pinned: Python, Google ADK, Gemini (free AI Studio key), hand-rolled numpy retrieval, synthetic data only, run via adk web / adk run (not Vertex AI Search, RAG Engine, Gemini File Search); do not let any agent pick a different one"
+    - "Open design.md with a plain-ASCII diagram of what will change (modules and files touched, data flow, what stays untouched)"
+    - "Place any new capability in the layers and module shape that docs/architecture.md defines and name its public interface; do not introduce a pattern the architecture does not approve (propose a change to it instead)"
+    - "Split the work into named chunks and show their dependencies and order in a diagram"
+    # product-team:end
+  tasks:
+    - Pair each code task with its test task (pytest, under backend/tests/).
+    - Pair each agent task with an eval task (evalset plus pass criteria,
+      under backend/evals/).
+    - Order work as scaffold, then tests, then implementation, then evals.
+    - Keep tasks to at most 2 hours each.
+    # product-team:begin (generated from docs/team/process.yaml; edit that file and re-run setup-workflow sync)
+    - "Keep tasks small and independently verifiable"
+    - "Group tasks under named chunks; one chunk is one commit's worth of work that can be built, verified and committed on its own"
+    - "Start tasks.md with a plain-ASCII chunk map (chunks, order, dependencies, which can run independently)"
+    - "Each chunk heading carries `owner:` (one of: frontend-dev, backend-dev, ux-designer, devops-engineer, owner), `tags:` (any of: ui, look, forms, api, auth, secrets, personal-data, privacy, legal) and a `gates:` line equal to the always gates plus the gates for its tags. Gate table - always: code-reviewer, qa-engineer; ui: accessibility-tester; look: ux-designer; forms: security-compliance; api: security-compliance; auth: security-compliance; secrets: security-compliance; personal-data: security-compliance, compliance-reviewer; privacy: compliance-reviewer; legal: compliance-reviewer"
+    # product-team:end
+
+operations:
+  apply:
+    guidance:
+      - Before coding, re-read the design's file-structure section and create
+        the directory skeleton first; put code only where the layout says.
+      - Write or update pytest tests with each code change and run them
+        before checking off a task.
+      - For agent changes, author the evals (evalsets, test_config.json,
+        content-check runner under backend/evals/) but DO NOT run them, nor any
+        command that calls the model, until the owner has supplied the API key
+        and says to run. Report such tasks as "authored, not run" and leave
+        them unchecked. Once run, report pass rates (outside the pytest gate)
+        and do not check off an agent task while its evals fail.
+      - Check ADK usage against the ADK docs, not memory. Flag any mismatch
+        with the design instead of silently deviating.
+      - Keep modules small, one responsibility each; no logic in agent.py
+        beyond wiring.
+      # product-team:begin (generated from docs/team/process.yaml; edit that file and re-run setup-workflow sync)
+      - "Product-team agents: OpenSpec is the only source of truth (specs under `openspec/specs` and `openspec/changes`). Notion is not used for this repo. The main session orchestrates, since subagents cannot spawn subagents. Do not use the build-mvp or new-idea skills here; use the agents only. Process config: docs/team/process.yaml; roles, handoffs and write permissions: docs/team/operating-model.md"
+      - "Every delegation prompt must include: the change path, the chunk's tasks, 'read CLAUDE.md, docs/team/operating-model.md and docs/engineering-standards.md first (binding)', the pinned stack (Python, Google ADK, Gemini (free AI Studio key), hand-rolled numpy retrieval, synthetic data only, run via adk web / adk run (not Vertex AI Search, RAG Engine, Gemini File Search)), the commands that define green (lint: ruff check backend, typecheck: python -m compileall -q backend/src, test: pytest backend/tests, build: pip install -e backend), and a request for a pass/fail verdict with evidence plus the standards self-check"
+      - "Inside a chunk the owner agent works autonomously; the chunk-boundary rule still applies"
+      - "After every delegation, verify the agent before accepting its work: run `python docs/team/tools/check_scope.py --agent <name> --base <commit before delegation> --report <report file>` and `python docs/team/tools/validate_return.py --agent <name> --tasks <assigned task ids> <report file>`. Any violation counts as a failed gate for that agent and goes back to it with the output. Then record the step in the audit trail (`docs/team/tools/audit.py`, see the audit-trail skill): take `audit.py begin` before delegating and `audit.py step` after"
+      - "Gates at the end of a chunk: code-reviewer, qa-engineer always; add by tag - always: code-reviewer, qa-engineer; ui: accessibility-tester; look: ux-designer; forms: security-compliance; api: security-compliance; auth: security-compliance; secrets: security-compliance; personal-data: security-compliance, compliance-reviewer; privacy: compliance-reviewer; legal: compliance-reviewer. A gate fails on any finding at or above major, or when lint, type-check or tests are not green, or the verdict lacks evidence. If an agent is disabled or not installed, say so and cover its checklist yourself instead of skipping it"
+      - "A failed gate goes back to the chunk's owner for a fix and a re-run of only that gate, at most 3 cycles, then stop and report to the user"
+      - "Before starting a chunk, show a short plain-ASCII \"you are here\" diagram (done / this chunk / remaining)"
+      - "Stop at each chunk boundary, report each gate's verdict with evidence, and wait for confirmation before the next chunk, unless the user has said to run through"
+      # product-team:end

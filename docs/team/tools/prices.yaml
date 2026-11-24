@@ -1,0 +1,10 @@
+# API-equivalent list prices, USD per million tokens. EDIT ME: these are placeholders, not verified.
+# On a subscription plan nothing is billed per token; costs here are a notional yardstick for comparing
+# phases (explore vs execute), not an invoice. Tokens are always recorded exactly; a model missing from
+# this table gets cost_usd = null and a warning in `check`.
+version: "2026-11-14-unverified"
+models:
+  # model id prefix; the longest matching prefix wins.
+  claude-sonnet-5:  {in: 3.00,  out: 15.00, cache_read: 0.30, cache_write_5m: 3.75,  cache_write_1h: 6.00}
+  claude-opus-5:    {in: 15.00, out: 75.00, cache_read: 1.50, cache_write_5m: 18.75, cache_write_1h: 30.00}
+  claude-haiku-5:   {in: 1.00,  out: 5.00,  cache_read: 0.10, cache_write_5m: 1.25,  cache_write_1h: 2.00}

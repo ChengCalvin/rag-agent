@@ -1,0 +1,111 @@
+# docs/team/process.yaml
+# The single configuration for how the product-team agents work in this repo.
+# Edit this file, then run `setup-workflow` (sync mode) to re-render the framework's own config.
+# Policy behind every key: docs/team/operating-model.md
+
+version: 1
+
+# --- Where the work lives --------------------------------------------------
+framework:
+  type: openspec            # openspec | spec-kit | notion | plain-markdown | other
+  name: OpenSpec            # display name; for type "other", the tool's name
+  # Paths relative to the repo root. Leave blank where the framework has no equivalent.
+  paths:
+    specs: openspec/specs
+    changes: openspec/changes
+    tasks_file: tasks.md           # file inside each change/feature that lists chunks and tasks
+    rules_home: openspec/config.yaml   # where the rendered preamble and gates are written
+  notion_in_use: false      # true only for type "notion"
+
+# --- What agents must not change -------------------------------------------
+stack:
+  pinned: true
+  summary: "Python, Google ADK, Gemini (free AI Studio key), hand-rolled numpy retrieval, synthetic data only, run via adk web / adk run"
+  excluded: [Vertex AI Search, RAG Engine, Gemini File Search]
+  commands:                 # what "green" means; agents run exactly these
+    lint: ruff check backend
+    typecheck: python -m compileall -q backend/src
+    test: pytest backend/tests
+    build: pip install -e backend
+
+# --- Concepts -> architecture -> standards -> code ---------------------------
+# principles (plugin, stack-neutral) -> architecture spec (project, versioned, owner-approved)
+# -> standards (derived rules) -> code. Change the architecture by proposal; see operating-model.md.
+architecture:
+  file: docs/architecture.md     # drafted by the architect, approved by the owner; layers, modules, limits
+
+standards:
+  file: docs/engineering-standards.md   # derived from the architecture; its architecture_version must match
+  enforce_in_lint: []       # rule names added to the linter, chosen with the owner
+
+# --- Who is on the team ----------------------------------------------------
+team:
+  # enabled: false means the orchestrator covers that checklist itself and says so in the report.
+  agents:
+    product-manager:      { enabled: true }
+    architect:            { enabled: true, engage: always }   # always | on_stack_change | never
+    ux-designer:          { enabled: true, mode: review }              # review | design (design = produces Figma/spec)
+    frontend-dev:         { enabled: true }
+    backend-dev:          { enabled: true }
+    code-reviewer:        { enabled: true }
+    qa-engineer:          { enabled: true }
+    accessibility-tester: { enabled: true, level: "WCAG 2.2 AA" }
+    security-compliance:  { enabled: true }
+    compliance-reviewer:  { enabled: true }
+    devops-engineer:      { enabled: true }
+    platform-engineer:    { enabled: false }                           # Large tier only
+
+# --- Who does what ----------------------------------------------------------
+# Owner agent per chunk kind. The planner copies this into each chunk's `owner:`.
+owners:
+  ui: frontend-dev
+  api: backend-dev
+  data: backend-dev
+  integration: backend-dev
+  visual: ux-designer       # a mockup/direction chunk, before any UI chunk that depends on it
+  infra: devops-engineer
+  human_only: owner         # credentials, brand, permissions, anything only the human can do
+
+# --- Gates: verification at the end of each chunk ---------------------------
+# A chunk's `tags:` decide its gates. `always` gates run on every chunk with code changes (qa-engineer: every chunk).
+gates:
+  always: [code-reviewer, qa-engineer]
+  by_tag:
+    ui: [accessibility-tester]
+    look: [ux-designer]
+    forms: [security-compliance]
+    api: [security-compliance]
+    auth: [security-compliance]
+    secrets: [security-compliance]
+    personal-data: [security-compliance, compliance-reviewer]
+    privacy: [compliance-reviewer]
+    legal: [compliance-reviewer]
+  # Findings fail a gate at or above this severity.
+  fail_on: major            # blocker | major | minor
+
+# --- Autonomy and approvals --------------------------------------------------
+autonomy:
+  confirm_chunk_boundary: true   # stop after each chunk and wait for the owner
+  max_fix_cycles: 3              # fix loop per failed gate, then stop and report
+  run_through: false             # true = owner pre-approved continuing across chunks
+approvals:                       # who must approve before the orchestrator proceeds
+  spec: owner
+  stack_change: owner
+  new_dependency: report         # owner | report (only list it in the report)
+  production_deploy: owner       # fixed; cannot be relaxed
+
+# --- Project rules that agents must also follow -----------------------------
+project_rules:                   # pointers, not copies; CLAUDE.md remains the home of detail
+  - "CLAUDE.md"
+
+# --- Where things live (used by the agent guardrails; globs relative to the repo) ---
+# Facts about this project's layout, not rules. Leave a list empty if the project has no such area.
+# {ui} and {server} fall back to {source} when empty.
+paths:
+  source: ["backend/src/**", "backend/data/**"]
+  ui: []
+  server: []
+  tests: ["backend/tests/**", "backend/evals/**", "**/test_*.py"]
+  migrations: []
+  infra: [".github/**", "Dockerfile*", "docker-compose*", "wrangler.*", "infra/**", "terraform/**"]
+  deps: ["package.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "pyproject.toml", "uv.lock", "requirements*.txt"]

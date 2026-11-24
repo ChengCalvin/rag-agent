@@ -1,0 +1,173 @@
+# docs/team/guardrails.yaml
+# What each agent may change, when it must stop, and what it must return.
+# The orchestrator verifies this after EVERY delegation:
+#   python docs/team/tools/check_scope.py   --agent <name> [--base <ref>] [--report <file>]
+#   python docs/team/tools/validate_return.py --agent <name> [--tasks 1.1,1.2] <report file or ->
+# Any violation counts as a failed gate for that agent (fix loop applies).
+#
+# Path tokens (expanded from docs/team/process.yaml `paths` and `framework.paths`):
+#   {source} {ui} {server} {tests} {migrations} {infra} {deps}   from `paths` (a list of globs each)
+#   {specs} {changes}                                            framework spec/change folders
+#   {framework_rules}                                            framework rules file
+#   {ui|source} means: use {ui}, or {source} when {ui} is empty.
+# An empty token drops that pattern. Anything not matched by `may_write` is out of scope (allowlist).
+# `protected` paths are denied to everyone except agents that list them in `may_write_protected`.
+
+version: 1
+
+protected:
+  - "docs/team/**"
+  - "docs/architecture.md"
+  - "docs/engineering-standards.md"
+  - "CLAUDE.md"
+  - ".claude/**"
+  - "{framework_rules}"
+
+# A change to any of these needs a "Dependency:" line (name, reason, alternative considered) in the report.
+dependency_gate_agents: [frontend-dev, backend-dev]
+
+agents:
+  product-manager:
+    kind: planner
+    may_write: ["{specs}", "{changes}", "docs/specs/**", "docs/compliance-requirements.md"]
+    verdicts: [READY, BLOCKED]
+    sections: [Evidence, Open items]
+    stop_when:
+      - the request is ambiguous or contradicts an approved requirement
+      - a requirement would need a change to the pinned stack or the architecture
+      - scope would grow beyond what the owner approved
+    max_attempts: 3
+
+  ux-designer:
+    kind: designer
+    may_write: ["docs/design/**", "docs/ux-review.md", "{changes}"]
+    verdicts: [READY, PASS, FAIL, BLOCKED]
+    sections: [Evidence, Open items]
+    stop_when:
+      - the chosen design direction is missing or not approved by the owner
+      - the work would require producing designs the project does not use (for example Figma when mode is review)
+    max_attempts: 3
+
+  architect:
+    kind: planner
+    may_write: ["{changes}", "docs/architecture.md", "docs/engineering-standards.md", "docs/adr/**", "docs/design/**"]
+    may_write_protected: ["docs/architecture.md", "docs/engineering-standards.md"]
+    verdicts: [READY, BLOCKED]
+    sections: [Evidence, Decisions, Open items]
+    stop_when:
+      - the change alters the pinned stack or adds server state not in the spec (the owner must approve)
+      - an architecture change has no proposal, no version bump or no migration plan
+      - the standards would no longer derive from the architecture
+    max_attempts: 3
+
+  frontend-dev:
+    kind: builder
+    may_write: ["{ui|source}", "{tests}", "{deps}"]
+    verdicts: [DONE, BLOCKED]
+    sections: [Tasks, Evidence, Standards self-check, Open items]
+    stop_when:
+      - the contract, endpoint or design the task relies on is missing or contradicts the spec
+      - the task needs files outside your write scope (server code, config, CI, specs, architecture)
+      - the same check fails after 3 attempts
+      - fixing it would need a pattern the architecture does not approve
+    max_attempts: 3
+
+  backend-dev:
+    kind: builder
+    may_write: ["{server|source}", "{migrations}", "{tests}", "{deps}"]
+    verdicts: [DONE, BLOCKED]
+    sections: [Tasks, Evidence, Standards self-check, Open items]
+    stop_when:
+      - the API contract must change (report it; do not change it silently)
+      - the task needs files outside your write scope (UI, config, CI, specs, architecture)
+      - the same check fails after 3 attempts
+      - fixing it would need a pattern the architecture does not approve
+    max_attempts: 3
+
+  code-reviewer:
+    kind: gate
+    may_write: ["docs/code-review.md"]
+    verdicts: [PASS, FAIL]
+    sections: [Evidence, Findings, Open items]
+    findings: true
+    stop_when:
+      - the standards or architecture file is missing (report it; do not invent rules)
+      - you are tempted to fix code (report the finding instead)
+    max_attempts: 1
+
+  gap-reviewer:
+    kind: gate
+    may_write: ["openspec/changes/*/gap-review.md", "openspec/changes/*/gap-review.json", ".gap-review/**"]
+    verdicts: [GREEN, AMBER, RED]
+    sections: [Evidence, Findings, Open items]
+    findings: true
+    stop_when:
+      - a needed input is missing (the change, a cited file, or the findings path); report it instead of guessing
+      - you are tempted to edit a proposal, design, spec or tasks file, or to answer a question that belongs to the owner (report it as a decision finding)
+    max_attempts: 1
+
+  qa-engineer:
+    kind: gate
+    may_write: ["{tests}", "docs/test-plan.md", "docs/qa-report.md"]
+    verdicts: [PASS, FAIL]
+    sections: [Evidence, Findings, Open items]
+    findings: true
+    stop_when:
+      - a scenario cannot be tested because the code has no testable boundary (file it as a finding)
+      - you are tempted to change product code (report the bug instead)
+    max_attempts: 1
+
+  accessibility-tester:
+    kind: gate
+    may_write: ["{tests}", "docs/accessibility-report.md"]
+    verdicts: [PASS, FAIL]
+    sections: [Evidence, Findings, Open items]
+    findings: true
+    stop_when:
+      - the target (local or staging URL) is not reachable
+      - you are tempted to change product code (report the issue instead)
+    max_attempts: 1
+
+  security-compliance:
+    kind: gate
+    may_write: ["docs/security-review.md"]
+    verdicts: [PASS, FAIL]
+    sections: [Evidence, Findings, Open items]
+    findings: true
+    stop_when:
+      - you would need a credential or access you were not given
+      - you are tempted to change product code (report the vulnerability instead)
+    max_attempts: 1
+
+  compliance-reviewer:
+    kind: gate
+    may_write: ["docs/compliance-requirements.md", "docs/compliance-report.md"]
+    verdicts: [PASS, FAIL, READY]
+    sections: [Evidence, Findings, Open items]
+    findings: true
+    stop_when:
+      - a requirement depends on legal judgement (mark it "needs legal review"; do not decide it)
+      - you would cite a source you have not opened
+    max_attempts: 1
+
+  devops-engineer:
+    kind: operator
+    may_write: ["{infra}", "docs/runbook.md", ".env.example"]
+    verdicts: [DONE, BLOCKED]
+    sections: [Tasks, Evidence, Rollback, Open items]
+    stop_when:
+      - the action targets production (the owner must approve in the current conversation)
+      - the action is destructive or hard to reverse (deleting data, force operations, spending money)
+      - a credential is missing
+    max_attempts: 3
+
+  platform-engineer:
+    kind: operator
+    may_write: ["{infra}", "docs/infra.md"]
+    verdicts: [DONE, BLOCKED]
+    sections: [Tasks, Evidence, Rollback, Open items]
+    stop_when:
+      - an apply, destroy or any action that changes live infrastructure (the owner must approve)
+      - an estimated cost increase that the owner has not approved
+      - a credential is missing
+    max_attempts: 3
