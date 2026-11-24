@@ -16,6 +16,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+    "mypy",
     "pytest",
     "ruff",
 ]
@@ -32,10 +33,15 @@ line-length = 100
 src = ["src", "tests", "evals"]
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "C90", "PLR0913"]
+select = ["E", "F", "I", "C90", "PLR0913", "PLR0915"]
 
 [tool.ruff.lint.mccabe]
 max-complexity = 10
 
 [tool.ruff.lint.pylint]
 max-args = 4
+max-statements = 50
+
+[tool.mypy]
+strict = true
+files = ["src"]

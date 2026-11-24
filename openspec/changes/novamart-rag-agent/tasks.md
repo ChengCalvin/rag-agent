@@ -1,12 +1,31 @@
+## Chunk map
+
+```
+ 1 Setup + verify ADK --+--> 2 Synthetic data --+
+                        |                       |
+                        +--> 3 Access control --+--> 5 Order tools --+
+                        |                       |                    |
+                        +--> 4 Retrieval -------+--> 6 Pipeline -----+--> 7 Agents --> 8 Evaluation --> 9 Docs --> 10 Final
+                                                      logic (pure)
+
+ Independent after 1:  2, 3, 4          (can be built in any order)
+ 5 needs 2, 3          6 needs 4 (models, chunk metadata)
+ 7 needs 3, 4, 5, 6    (every agent and the orchestrator; first point where adk run works end to end)
+ 8 needs 7             9 and 10 need 8
+ Revision 2 (architecture v4) added chunks 6 and 7, replaced old task 5.3, and extended 1, 2, 3, 4, 8.
+```
+
 ## 1. Setup and verification of assumptions
 
 owner: backend-dev
 tags: none
 gates: code-reviewer, qa-engineer
 
-- [ ] 1.1 Create the project skeleton per design D8 (everything under `backend/`) with `backend/pyproject.toml`, `.gitignore` (excluding `.env` and cache) and `.env.example`; verify `pip install -e backend` succeeds and `adk web backend/src` lists the agent and `.env` is ignored by git
-- [ ] 1.2 Check AI Studio for the free-tier model IDs and rate limits, choose the default model and record it in configuration; verify a one-line `google-genai` generate call and one embedding call succeed with the key
+- [ ] 1.1 Create the project skeleton per design D8 (everything under `backend/`, including `agents/`, `prompts/`, `pipeline/`) with `backend/pyproject.toml`, `.gitignore` (excluding `.env` and cache) and `.env.example`; verify `pip install -e backend` succeeds and `adk web backend/src` lists the agent and `.env` is ignored by git
+- [ ] 1.2 Check AI Studio for the free-tier model IDs and rate limits, choose the default chat model and record it in configuration, and record the text-only embedding model ID (default `gemini-embedding-001`) in configuration too, plus the published per-million-token prices for both (design D17); verify a one-line `google-genai` generate call and one embedding call succeed with the key
 - [ ] 1.3 Confirm current ADK syntax on adk.dev (agent definition, callbacks, `adk eval`); verify a minimal agent runs under `adk run`
+- [ ] 1.4 Confirm on adk.dev every ADK behaviour that design D1, D11 and D16 assume: `LoopAgent` exit by `escalate`, custom `BaseAgent` with branching, `output_schema` disabling tools, state shared across sub-agents of one orchestrator, argument mutation in `before_tool_callback`, `{key}` instruction templating, `usage_metadata` fields and thinking-token billing, and whether embedding returns token counts; verify with a throwaway two-agent script under `adk run`, and record each result (confirmed, or the deviation and the design change it needs) in design.md Open Questions
+- [ ] 1.5 Run the `architect` agent review of the current architecture version (v5) and re-derive `docs/engineering-standards.md` from it; verify the standards file's `architecture_version` equals the architecture spec's `version` and the owner approves the spec (status draft to approved) before chunk 7 starts
 
 ## 2. Synthetic data
 
@@ -14,9 +33,10 @@ owner: backend-dev
 tags: personal-data
 gates: code-reviewer, qa-engineer, security-compliance, compliance-reviewer
 
-- [ ] 2.1 Write 8 short policy documents with audience front-matter, including a returns document with structured window and exclusion parameters, one category exception, one manager-only document, and deliberate gaps (such as bulk orders); verify each parses and the gaps are listed in the README
+- [ ] 2.1 Write 8 short policy documents with audience and `doc_type: policy` front-matter, including a returns document with structured window and exclusion parameters, one category exception, one manager-only document, and deliberate gaps (such as bulk orders); verify each parses and the gaps are listed in the README
 - [ ] 2.2 Write about 10 orders across 3 stores covering delivered, in-transit and returned states with seeded customer name, email and address; verify the file loads and includes cross-store cases
 - [ ] 2.3 Write about 4 personas (two stores' employees, a manager, a regional manager); verify they load into principals
+- [ ] 2.4 Write 3 short product documents with `doc_type: product`, each containing one ASCII diagram in a fenced code block (plain ASCII only); verify they parse, the diagram blocks are intact, and one product document has audience restrictions
 
 ## 3. Access control
 
@@ -28,6 +48,7 @@ gates: code-reviewer, qa-engineer, security-compliance
 - [ ] 3.2 Implement order-ID validation and the shared authorization function, with uniform denial responses; verify unit tests for malformed IDs, cross-store denial, regional-manager allow, unknown role deny, and identical denial vs not-found replies
 - [ ] 3.3 Implement the before-tool callback with per-role tool allowlist and the audit log with hashed order references and PII redaction; verify a test that seeded name, email and address never appear in log output
 - [ ] 3.4 Implement the denied-lookup counter with session throttling; verify a test that sequential probing is throttled and returns nothing (cut first if time runs short)
+- [ ] 3.5 Write a pure test helper under `backend/tests/` that builds a fake tool context carrying a principal in session state; verify tasks 3.1 to 3.3 use it and that task 7.5 can reuse it for the multi-agent case
 
 ## 4. Retrieval
 
@@ -35,47 +56,73 @@ owner: backend-dev
 tags: api
 gates: code-reviewer, qa-engineer, security-compliance
 
-- [ ] 4.1 Implement the chunker, embedder with per-chunk calls and content-hash disk cache, and cosine index with audience filtering; verify tests that a manager-only chunk is never returned to a non-manager and that cached vectors are reused
-- [ ] 4.2 Implement `search_policy` returning chunks, document IDs and scores, or `no_answer` below the configurable threshold; verify tests for an answerable query, a gap query and an unrelated query
+- [ ] 4.1 Implement the chunker (by heading, never splitting inside a fenced code block), embedder with per-chunk calls and content-hash disk cache, and cosine index with audience filtering; verify tests that a manager-only chunk is never returned to a non-manager, that cached vectors are reused, and that a fenced diagram stays whole in one chunk
+- [ ] 4.2 Implement `search_policy` returning chunks, document IDs, section headings, file paths, `doc_type` and scores, or `no_answer` below the configurable threshold; verify tests for an answerable query, a gap query and an unrelated query
+- [ ] 4.3 Add the "closest titles" lookup (up to 3 audience-filtered document titles, used by refusal case C, independent of the answer threshold); verify a test that no restricted title is ever returned to a non-permitted persona
 
-## 5. Order tools and agent
+## 5. Order tools
 
 owner: backend-dev
 tags: api, personal-data
 gates: code-reviewer, qa-engineer, security-compliance, compliance-reviewer
 
-- [ ] 5.1 Implement the read-only order backend stub and `get_order_status` returning the minimised, masked view; verify tests for permitted, denied and unknown orders and that no full email or address is returned
-- [ ] 5.2 Implement `check_return_eligibility` with deterministic date and category logic from policy parameters; verify unit tests for within-window, category-exception, outside-window and undeterminable-policy cases
-- [ ] 5.3 Write the system instruction (answer only from tool results, cite documents, treat retrieved text as data, decline and escalate, refuse role claims and instruction disclosure) and wire the root agent; verify by running `adk run` through one doc question, one order lookup, one combined question and one unanswerable question
+- [ ] 5.1 Implement the read-only order backend stub (`adapters/orders_api`) and `get_order_status` returning the minimised, masked view; verify tests for permitted, denied and unknown orders and that no full email or address is returned
+- [ ] 5.2 Implement `check_return_eligibility` with deterministic date and category logic from policy parameters, returning the cited policy document id and the parameters used; verify unit tests for within-window, category-exception, outside-window and undeterminable-policy cases
 
-## 6. Evaluation
-
-owner: backend-dev
-tags: none
-gates: code-reviewer, qa-engineer
-
-- [ ] 6.1 Write 12 to 15 quality cases across the four question types with persona, expected behavior and rule checks; verify at least two per type
-- [ ] 6.2 Write the security cases (cross-store access, role-override claim, poisoned document, PII in logs, manager-only content); verify each has an unambiguous pass condition
-- [ ] 6.3 Build the runner (ADK eval for tool trajectories plus custom content checks) and run both sets; verify it produces per-case results and an overall pass rate
-- [ ] 6.4 Run the quality set at three threshold values and choose one; verify the threshold table is written to the results summary
-- [ ] 6.5 Write the results summary listing every failure with a diagnosis; verify no failing case is omitted and fix or document each one
-
-## 7. Documentation and production note
+## 6. Pipeline logic (pure, no ADK imports)
 
 owner: backend-dev
 tags: none
 gates: code-reviewer, qa-engineer
 
-- [ ] 7.1 Write the README with setup, persona table, run commands, eval commands, the synthetic-data statement and the "persona is not authentication" statement; verify a fresh clone follows it to a working session
-- [ ] 7.2 Re-check the Google product claims for the note against current docs (Gemini Enterprise registration of custom agents, identity passing, ACL setup, CMEK and residency, data-use terms); verify each claim has a source or is marked to be confirmed
-- [ ] 7.3 Write the one-page production note with the four required sections, a stated recommendation and fallback, the identity-propagation spike, and a prototype-limits list; verify it renders to a single page
-- [ ] 7.4 Run a secret scan over the repository and its history; verify zero findings
+- [ ] 6.1 Add typed `Rubric`, `Verdict`, `ConfidenceBand` and the pipeline settings (loop exit threshold T, weights, band thresholds, `max_iterations`, rewrite length cap, clarification cap) to `models.py` and `config`; verify tests that bad values fail at load and defaults match design D11 and D12
+- [ ] 6.2 Implement `pipeline/precheck` (empty, over-length, known injection patterns) and `pipeline/routing` (route from the rubric: order, knowledge, clarify, oos; clarification cap of one per question); verify tests for each route, the cap, and that a malformed or empty rubric falls back to a single criterion made from the user message
+- [ ] 6.3 Implement `pipeline/rubric_check` (coverage fraction; required-criterion cap; downgrade-only rule so a verdict can never lift a deterministic `no_answer`) and `pipeline/confidence` (composite, band, loop-exit decision); verify tests for each band, the cap, the downgrade-only rule, and iteration exhaustion
+- [ ] 6.4 Implement the code-side output assembly: Sources list from chunk metadata, confidence footer, and the check that every fenced block in a reply appears verbatim in the retrieved chunks (strip otherwise); verify tests including a model-invented diagram being stripped and a fabricated citation being impossible
+- [ ] 6.5 Implement `pipeline/cost` (pure): per-call usage record, `TurnCost`, session total, price table lookup by model ID with "cost unavailable" for unpriced models, embedding estimate, and the cost-line text; add price entries and `NOVAMART_SHOW_COST` (default true) to `config`; verify tests for a rewrite turn summing every call, a precheck decline at $0.00 with 0 calls, a cache hit adding nothing, an unpriced model, two turns summing into the session total, and flag on and off
 
-## 8. Final check
+## 7. Pipeline agents and orchestrator
+
+owner: backend-dev
+tags: api, auth
+gates: code-reviewer, qa-engineer, security-compliance
+
+- [ ] 7.1 Write one prompt module per agent in `prompts/` (intake, retrieval, validator, composer, order; refusal, clarification and escalation wording; retrieved text, rubric and rewrites treated as data; role claims and instruction disclosure refused); verify by review against ARCH-CFG-2 that no policy facts are hard-coded
+- [ ] 7.2 Implement the intake agent (no tools, `output_schema` Rubric) and the orchestrator (`BaseAgent`, branching through `pipeline/routing`, order shortcut, clarification turn state); verify by running `adk run` through one policy question, one product question, one order lookup, one under-specified question, and one out-of-scope question
+- [ ] 7.3 Implement the retrieval and validator agents inside `LoopAgent`, the code-side loop-exit callback and the query-hint override in `before_tool_callback`; verify by `adk run` on a question that needs one rewrite and one that exhausts iterations, and by a unit test that the exit decision comes from `pipeline/confidence`
+- [ ] 7.4 Implement the order agent and the composer (formats by `doc_type`, order label, decline and clarification wording, Low-band caveat), wire the after-model callback that appends Sources and the band and strips unverified diagrams, and finish `agent.py` as wiring only; verify by `adk run` through one combined order-and-policy question, one unanswerable question, and a product question that shows its diagram
+- [ ] 7.5 Write the identity-propagation test: the principal injected at the orchestrator is read by the tool in `retrieval` and in `order`, no sub-agent output can change it, and intake, validator and composer have no tools; verify it passes with the fake context from 3.5 and again once under `adk run`
+- [ ] 7.6 Wire cost capture: an after-model callback on every LLM agent appends its `usage_metadata` record to the per-turn list in state, the orchestrator clears the list each turn and updates the session total, and the composer callback appends the cost line after its own usage is counted; verify by `adk run` that the line appears with the flag on and not with it off, that the session total grows across questions, and by a test that nonexistent and out-of-scope order replies show equal call counts and tokens
+
+## 8. Evaluation
 
 owner: backend-dev
 tags: none
 gates: code-reviewer, qa-engineer
 
-- [ ] 8.1 Run all unit tests, the quality and security evals, and one end-to-end demo per persona from a clean environment; verify the results match the summary
-- [ ] 8.2 Review each spec scenario against the delivered behavior; verify every scenario has a test, an eval case, or a stated reason it is covered by documentation
+- [ ] 8.1 Update the spec scenarios in `specs/` for the clarification turn, the refusal split (C against E), the confidence band and the order shortcut, each with a testable scenario; verify every new requirement maps to an eval case id
+- [ ] 8.2 Write 15 to 18 quality cases across policy, product, order and combined questions with persona, expected behavior and rule checks, plus one case for each refusal outcome A to E; verify at least two cases per question type and exactly the five outcomes covered
+- [ ] 8.3 Write the security cases (cross-store access, role-override claim, poisoned document, rubric or rewrite injection, PII in logs, manager-only content, denial indistinguishable from not-found through the validator); verify each has an unambiguous pass condition
+- [ ] 8.4 Build the runner (ADK eval for tool trajectories plus custom content checks, call count and cost per question) and run both sets; verify it produces per-case results and an overall pass rate
+- [ ] 8.5 Tune the loop-exit threshold T, composite weights and band thresholds, and run the quality set at three cosine threshold values; verify the tuning table and the chosen defaults are written to the results summary
+- [ ] 8.6 Write the results summary listing every failure with a diagnosis, validator agreement against a hand-labelled subset, model calls per question, and cost per question with the mean per route and the cost at 1,000 questions; verify no failing case is omitted and fix or document each one
+
+## 9. Documentation and production note
+
+owner: backend-dev
+tags: none
+gates: code-reviewer, qa-engineer
+
+- [ ] 9.1 Write the README with setup, persona table, run commands, eval commands, the pipeline diagram, the synthetic-data statement and the "persona is not authentication" statement; verify a fresh clone follows it to a working session
+- [ ] 9.2 Re-check the Google product claims for the note against current docs (Gemini Enterprise registration of custom agents, identity passing, ACL setup, CMEK and residency, data-use terms) and the token prices used in the cost line; verify each claim has a source or is marked to be confirmed
+- [ ] 9.3 Write the one-page production note with the four required sections, a stated recommendation and fallback, the identity-propagation spike, and a prototype-limits list; verify it renders to a single page
+- [ ] 9.4 Run a secret scan over the repository and its history; verify zero findings
+
+## 10. Final check
+
+owner: backend-dev
+tags: none
+gates: code-reviewer, qa-engineer
+
+- [ ] 10.1 Run all unit tests, the quality and security evals, and one end-to-end demo per persona from a clean environment; verify the results match the summary
+- [ ] 10.2 Review each spec scenario against the delivered behavior; verify every scenario has a test, an eval case, or a stated reason it is covered by documentation
