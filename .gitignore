@@ -7,3 +7,6 @@ __pycache__/
 backend/data/.cache/
 backend/evals/results/
 .claude/settings.local.json
+.gap-review/
+# ADK session store (adk run / adk web)
+.adk/

@@ -1,0 +1,32 @@
+{
+  "users": [
+    {
+      "user_id": "emp_store7",
+      "name": "Rowan Ashgrove",
+      "role": "employee",
+      "store_id": "store-7",
+      "region": "north"
+    },
+    {
+      "user_id": "emp_store12",
+      "name": "Imogen Caldbeck",
+      "role": "employee",
+      "store_id": "store-12",
+      "region": "north"
+    },
+    {
+      "user_id": "mgr_store7",
+      "name": "Tobias Fennimore",
+      "role": "manager",
+      "store_id": "store-7",
+      "region": "north"
+    },
+    {
+      "user_id": "regmgr_north",
+      "name": "Wilhelmina Oakhurst",
+      "role": "regional_manager",
+      "store_id": null,
+      "region": "north"
+    }
+  ]
+}

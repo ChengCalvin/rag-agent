@@ -45,8 +45,8 @@ The system SHALL keep a total cost and question count for the session, starting 
 - **THEN** the second reply's session total equals the sum of both per-answer costs
 
 ### Requirement: Cost does not reveal why an order was denied
-The cost line SHALL be identical in structure and magnitude for a nonexistent order and an out-of-scope order.
+The cost line SHALL show the same call count for a nonexistent order and an out-of-scope order, and both replies SHALL come from the same code path.
 
 #### Scenario: Denial parity
 - **WHEN** a Store 12 persona asks about a nonexistent order and about a Store 7 order
-- **THEN** both replies show the same call count and token totals
+- **THEN** both replies show the same call count and the same code-produced text; token totals are compared only for the same message text

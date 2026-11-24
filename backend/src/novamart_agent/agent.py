@@ -1,11 +1,8 @@
-"""Root agent wiring. Tools, callbacks and prompts are added in later tasks."""
+"""Root agent wiring only: the orchestrator `Workflow` that adk web and adk run load."""
 
-from google.adk.agents import Agent
-
+from .agents import AgentModels, build_deps, build_orchestrator
 from .config import load_settings
 
-root_agent = Agent(
-    name="novamart_assistant",
-    model=load_settings().model,
-    instruction="You are the NovaMart support assistant.",
-)
+_settings = load_settings()
+
+root_agent = build_orchestrator(build_deps(_settings), AgentModels.uniform(_settings.model))

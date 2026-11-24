@@ -1,0 +1,185 @@
+{
+  "orders": [
+    {
+      "order_id": "NM-480101",
+      "store_id": "store-7",
+      "region": "north",
+      "status": "delivered",
+      "ordered_date": "2026-11-12",
+      "expected_delivery": "2026-11-18",
+      "delivered_date": "2026-11-18",
+      "returned_date": null,
+      "customer": {
+        "name": "Ottoline Barnaby-Thrushwick",
+        "email": "ottoline.thrushwick@example.test",
+        "address": "9213 Wombat Orchard Row, Brindlemoor, ZZ 99017"
+      },
+      "items": [
+        {"sku": "NH-AUD-110", "name": "NovaHub Wireless Headphones", "category": "electronics", "quantity": 1, "condition": "unopened"}
+      ]
+    },
+    {
+      "order_id": "NM-480102",
+      "store_id": "store-7",
+      "region": "north",
+      "status": "delivered",
+      "ordered_date": "2026-10-28",
+      "expected_delivery": "2026-11-03",
+      "delivered_date": "2026-11-03",
+      "returned_date": null,
+      "customer": {
+        "name": "Peregrine Quillon-Vanterpool",
+        "email": "peregrine.vanterpool@example.com",
+        "address": "55 Saltmarsh Lantern Close, Fenwick-on-Quay, ZZ 99024"
+      },
+      "items": [
+        {"sku": "NT-TAB-210", "name": "NovaTab 10 Tablet", "category": "electronics", "quantity": 1, "condition": "opened"}
+      ]
+    },
+    {
+      "order_id": "NM-480103",
+      "store_id": "store-7",
+      "region": "north",
+      "status": "in_transit",
+      "ordered_date": "2026-11-20",
+      "expected_delivery": "2026-11-26",
+      "delivered_date": null,
+      "returned_date": null,
+      "customer": {
+        "name": "Marisol Tenebrae-Quayle",
+        "email": "marisol.quayle@example.test",
+        "address": "1708 Gossamer Kiln Terrace, Hollowmere, ZZ 99031"
+      },
+      "items": [
+        {"sku": "NC-FRG-050", "name": "NovaCool Mini Fridge", "category": "home", "quantity": 1, "condition": "unopened"}
+      ]
+    },
+    {
+      "order_id": "NM-480104",
+      "store_id": "store-7",
+      "region": "north",
+      "status": "returned",
+      "ordered_date": "2026-10-14",
+      "expected_delivery": "2026-10-20",
+      "delivered_date": "2026-10-20",
+      "returned_date": "2026-10-28",
+      "customer": {
+        "name": "Fenwick Alderquist-Moorcroft",
+        "email": "fenwick.moorcroft@example.com",
+        "address": "302 Tarnished Compass Lane, Westerbrook, ZZ 99040"
+      },
+      "items": [
+        {"sku": "NA-JKT-330", "name": "NovaWear Rain Jacket", "category": "apparel", "quantity": 1, "condition": "unopened"}
+      ]
+    },
+    {
+      "order_id": "NM-480201",
+      "store_id": "store-12",
+      "region": "north",
+      "status": "delivered",
+      "ordered_date": "2026-11-09",
+      "expected_delivery": "2026-11-15",
+      "delivered_date": "2026-11-15",
+      "returned_date": null,
+      "customer": {
+        "name": "Isadora Pellwick-Mossgrove",
+        "email": "isadora.mossgrove@example.test",
+        "address": "47 Umbrella Fig Crescent, Larkspur Cove, ZZ 99052"
+      },
+      "items": [
+        {"sku": "NK-BLN-120", "name": "NovaKitchen Blender", "category": "home", "quantity": 1, "condition": "unopened"}
+      ]
+    },
+    {
+      "order_id": "NM-480202",
+      "store_id": "store-12",
+      "region": "north",
+      "status": "delivered",
+      "ordered_date": "2026-10-03",
+      "expected_delivery": "2026-10-09",
+      "delivered_date": "2026-10-09",
+      "returned_date": null,
+      "customer": {
+        "name": "Cuthbert Nightingale-Rooke",
+        "email": "cuthbert.rooke@example.com",
+        "address": "8821 Copperleaf Windmill Way, Ashenfold, ZZ 99063"
+      },
+      "items": [
+        {"sku": "NA-HDY-410", "name": "NovaWear Hoodie", "category": "apparel", "quantity": 2, "condition": "unopened"}
+      ]
+    },
+    {
+      "order_id": "NM-480203",
+      "store_id": "store-12",
+      "region": "north",
+      "status": "in_transit",
+      "ordered_date": "2026-11-19",
+      "expected_delivery": "2026-11-25",
+      "delivered_date": null,
+      "returned_date": null,
+      "customer": {
+        "name": "Lysandra Hobbleton-Greaves",
+        "email": "lysandra.greaves@example.test",
+        "address": "615 Pelican Ledger Street, Dunmarrow, ZZ 99078"
+      },
+      "items": [
+        {"sku": "NH-SPK-100", "name": "NovaHub Smart Speaker", "category": "electronics", "quantity": 1, "condition": "unopened"}
+      ]
+    },
+    {
+      "order_id": "NM-480301",
+      "store_id": "store-19",
+      "region": "south",
+      "status": "delivered",
+      "ordered_date": "2026-11-06",
+      "expected_delivery": "2026-11-12",
+      "delivered_date": "2026-11-12",
+      "returned_date": null,
+      "customer": {
+        "name": "Thaddeus Wrenfield-Ostrander",
+        "email": "thaddeus.ostrander@example.com",
+        "address": "29 Quicksilver Heron Gardens, Pemberwick, ZZ 99085"
+      },
+      "items": [
+        {"sku": "NG-CARD-050", "name": "NovaMart Gift Card 50", "category": "gift_cards", "quantity": 1, "condition": "unopened"},
+        {"sku": "NK-PAN-220", "name": "NovaKitchen Frying Pan", "category": "home", "quantity": 1, "condition": "unopened"}
+      ]
+    },
+    {
+      "order_id": "NM-480302",
+      "store_id": "store-19",
+      "region": "south",
+      "status": "returned",
+      "ordered_date": "2026-10-22",
+      "expected_delivery": "2026-10-28",
+      "delivered_date": "2026-10-28",
+      "returned_date": "2026-11-04",
+      "customer": {
+        "name": "Beatrix Gallowglass-Pennyfeather",
+        "email": "beatrix.pennyfeather@example.test",
+        "address": "774 Thistledown Anchor Road, Corvale, ZZ 99091"
+      },
+      "items": [
+        {"sku": "NT-TAB-210", "name": "NovaTab 10 Tablet", "category": "electronics", "quantity": 1, "condition": "defective"}
+      ]
+    },
+    {
+      "order_id": "NM-480303",
+      "store_id": "store-19",
+      "region": "south",
+      "status": "in_transit",
+      "ordered_date": "2026-11-21",
+      "expected_delivery": "2026-11-27",
+      "delivered_date": null,
+      "returned_date": null,
+      "customer": {
+        "name": "Odalys Fernsby-Colthurst",
+        "email": "odalys.colthurst@example.com",
+        "address": "3340 Marigold Sextant Drive, Tillerby, ZZ 99096"
+      },
+      "items": [
+        {"sku": "NA-BOT-500", "name": "NovaWear Hiking Boots", "category": "apparel", "quantity": 1, "condition": "unopened"}
+      ]
+    }
+  ]
+}

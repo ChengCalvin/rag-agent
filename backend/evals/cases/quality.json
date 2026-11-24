@@ -1,0 +1,249 @@
+{
+  "set": "quality",
+  "description": "Quality set: 18 cases (3 policy, 3 product, 5 order, 2 combined, 5 refusal outcomes A to E). Every check is objective; no model grading. Combined cases are a known limitation of the order-only path (design D14).",
+  "cases": [
+    {
+      "id": "answerable-policy-question-electronics-window",
+      "set": "quality", "type": "policy", "persona": "emp_store7",
+      "scenario": "Answerable policy question",
+      "turns": ["How long does a customer have to return opened electronics?"],
+      "expected": "States the 14-day electronics window, cites the returns document, ends with a code-written confidence band, uses search_policy and no order tool.",
+      "checks": [
+        {"kind": "tool_called", "tool": "search_policy"},
+        {"kind": "tool_not_called", "tool": "get_order_status"},
+        {"kind": "tool_not_called", "tool": "check_return_eligibility"},
+        {"kind": "reply_contains_any", "values": ["14 days", "14-day", "14 day", "fourteen"]},
+        {"kind": "cites", "file": "returns-policy.md"},
+        {"kind": "reply_matches", "pattern": "(?m)^Confidence: (High|Medium|Low)$"},
+        {"kind": "reply_not_matches", "pattern": "(?i)confidence[^\\n]{0,40}(\\d|%)"}
+      ]
+    },
+    {
+      "id": "exception-overrides-general-rule-tablet",
+      "set": "quality", "type": "policy", "persona": "emp_store7",
+      "scenario": "Exception overrides general rule",
+      "turns": ["A customer wants to return a tablet that was delivered 20 days ago. Is it still inside the return window?"],
+      "expected": "Applies the 14-day electronics window, not the general 30 days: the tablet is outside its window. Cites the returns document.",
+      "checks": [
+        {"kind": "tool_called", "tool": "search_policy"},
+        {"kind": "reply_contains_all", "values": ["14"]},
+        {"kind": "reply_matches", "pattern": "\\b(not|outside|no longer|cannot|can't|expired|past)\\b"},
+        {"kind": "cites", "file": "returns-policy.md"}
+      ]
+    },
+    {
+      "id": "answerable-policy-question-price-match-days",
+      "set": "quality", "type": "policy", "persona": "emp_store12",
+      "scenario": "Answerable policy question",
+      "turns": ["How many days after a purchase can a customer ask for a price match?"],
+      "expected": "States 7 days and cites the price matching document.",
+      "checks": [
+        {"kind": "tool_called", "tool": "search_policy"},
+        {"kind": "reply_matches", "pattern": "\\b7\\b|seven"},
+        {"kind": "cites", "file": "price-matching-policy.md"}
+      ]
+    },
+    {
+      "id": "answerable-product-question-fridge-clearance-diagram",
+      "set": "quality", "type": "product", "persona": "emp_store7",
+      "scenario": "Answerable product question",
+      "turns": ["What clearance does the NovaCool mini fridge need around it?"],
+      "expected": "Answers from the NovaCool placement guide, includes its ASCII diagram unchanged, cites the guide.",
+      "checks": [
+        {"kind": "tool_called", "tool": "search_policy"},
+        {"kind": "cites", "file": "product-novacool-fridge.md"},
+        {"kind": "reply_contains_all", "values": ["+--------------+", "|  NovaCool    |", "15 cm"]}
+      ]
+    },
+    {
+      "id": "answerable-product-question-speaker-pairing",
+      "set": "quality", "type": "product", "persona": "emp_store12",
+      "scenario": "Answerable product question",
+      "turns": ["How do I connect the NovaHub speaker, and how close must it be to the router?"],
+      "expected": "States the 10 metre limit during setup, includes the connection diagram unchanged, cites the setup guide.",
+      "checks": [
+        {"kind": "tool_called", "tool": "search_policy"},
+        {"kind": "cites", "file": "product-novahub-speaker.md"},
+        {"kind": "reply_matches", "pattern": "10\\s*(metres|meters|m)\\b"},
+        {"kind": "reply_contains_all", "values": ["[ Home router ]"]}
+      ]
+    },
+    {
+      "id": "answerable-product-question-fridge-first-use",
+      "set": "quality", "type": "product", "persona": "emp_store7",
+      "scenario": "Answerable product question",
+      "turns": ["How long should the NovaCool mini fridge stand upright before it is switched on?"],
+      "expected": "States 4 hours and cites the placement guide.",
+      "checks": [
+        {"kind": "tool_called", "tool": "search_policy"},
+        {"kind": "reply_matches", "pattern": "\\b4 hours\\b|four hours"},
+        {"kind": "cites", "file": "product-novacool-fridge.md"}
+      ]
+    },
+    {
+      "id": "permitted-order-status-and-order-shortcut",
+      "set": "quality", "type": "order", "persona": "emp_store7",
+      "scenario": "Permitted order",
+      "turns": ["What is the status of order NM-480103?"],
+      "expected": "Reports in transit, expected delivery 2026-11-26 and the fridge, labelled from order records, with no confidence band and no retrieval or validator (order shortcut).",
+      "checks": [
+        {"kind": "tool_called", "tool": "get_order_status"},
+        {"kind": "tool_not_called", "tool": "search_policy"},
+        {"kind": "agent_not_called", "agent": "validator"},
+        {"kind": "reply_contains_any", "values": ["in transit", "in_transit"]},
+        {"kind": "reply_contains_any", "values": ["2026-11-26", "26 November", "November 26", "Nov 26", "26 Nov"]},
+        {"kind": "reply_contains_any", "values": ["NovaCool", "fridge"]},
+        {"kind": "reply_contains_all", "values": ["From order records"]},
+        {"kind": "band_is", "band": "none"},
+        {"kind": "customer_data_absent"}
+      ]
+    },
+    {
+      "id": "within-the-return-window-eligible",
+      "set": "quality", "type": "order", "persona": "emp_store7",
+      "scenario": "Within the return window",
+      "turns": ["Can order NM-480101 be returned?"],
+      "expected": "Headphones delivered 5 days ago are inside the 14-day electronics window: eligible, cites the returns document.",
+      "checks": [
+        {"kind": "tool_called", "tool": "check_return_eligibility"},
+        {"kind": "tool_not_called", "tool": "search_policy"},
+        {"kind": "band_is", "band": "none"},
+        {"kind": "reply_not_matches", "pattern": "not (be )?(eligible|returnable)|cannot be returned|can't be returned|ineligible"},
+        {"kind": "reply_contains_any", "values": ["eligible", "can be returned", "may be returned", "can return", "within"]},
+        {"kind": "cites", "file": "returns-policy.md"}
+      ]
+    },
+    {
+      "id": "category-exception-electronics-outside-window",
+      "set": "quality", "type": "order", "persona": "emp_store7",
+      "scenario": "Category exception",
+      "turns": ["Can the tablet in order NM-480102 be returned?"],
+      "expected": "Tablet delivered 20 days ago: outside the 14-day electronics window although inside 30 days. Not eligible; explains the electronics exception; cites the returns document.",
+      "checks": [
+        {"kind": "tool_called", "tool": "check_return_eligibility"},
+        {"kind": "tool_not_called", "tool": "search_policy"},
+        {"kind": "band_is", "band": "none"},
+        {"kind": "reply_contains_any", "values": ["not eligible", "cannot be returned", "can't be returned", "not returnable", "ineligible", "outside"]},
+        {"kind": "reply_contains_all", "values": ["14", "electronics"]},
+        {"kind": "cites", "file": "returns-policy.md"}
+      ]
+    },
+    {
+      "id": "wider-scope-role-regional-manager",
+      "set": "quality", "type": "order", "persona": "regmgr_north",
+      "scenario": "Wider-scope role",
+      "turns": ["What is the status of order NM-480201?"],
+      "expected": "Store 12 is in the north region, so the regional manager gets the status: delivered, a blender.",
+      "checks": [
+        {"kind": "tool_called", "tool": "get_order_status"},
+        {"kind": "reply_contains_any", "values": ["delivered"]},
+        {"kind": "reply_contains_any", "values": ["blender"]},
+        {"kind": "customer_data_absent"}
+      ]
+    },
+    {
+      "id": "clarification-asked-only-once",
+      "set": "quality", "type": "order", "persona": "emp_store7",
+      "scenario": "Clarification asked only once",
+      "turns": ["What is the status of my order?", "I do not have the number."],
+      "expected": "First reply asks exactly one question for the order number (outcome A). The second reply is not another clarification.",
+      "checks": [
+        {"kind": "outcome_is", "turn": 0, "outcome": "A"},
+        {"kind": "outcome_not", "turn": 1, "outcome": "A"}
+      ]
+    },
+    {
+      "id": "combined-question-known-limitation-delivery",
+      "set": "quality", "type": "combined", "persona": "emp_store7", "known_limitation": true,
+      "scenario": "Combined question known limitation",
+      "turns": ["What is the status of order NM-480103, and what is the standard delivery time for new orders?"],
+      "expected": "Order part answered (in transit); reply says it cannot answer the policy part; no search_policy call (order path only, design D14).",
+      "checks": [
+        {"kind": "tool_called", "tool": "get_order_status"},
+        {"kind": "tool_not_called", "tool": "search_policy"},
+        {"kind": "reply_contains_any", "values": ["in transit", "in_transit"]},
+        {"kind": "reply_contains_all", "values": ["cannot answer the policy part"]}
+      ]
+    },
+    {
+      "id": "combined-question-known-limitation-refund-method",
+      "set": "quality", "type": "combined", "persona": "emp_store12", "known_limitation": true,
+      "scenario": "Combined question known limitation",
+      "turns": ["Can order NM-480201 be returned, and how are refunds paid to the customer?"],
+      "expected": "Eligibility answered from order records; reply says it cannot answer the policy part (refund method); no search_policy call.",
+      "checks": [
+        {"kind": "tool_called", "tool": "check_return_eligibility"},
+        {"kind": "tool_not_called", "tool": "search_policy"},
+        {"kind": "reply_contains_all", "values": ["cannot answer the policy part"]}
+      ]
+    },
+    {
+      "id": "order-number-missing-asks-one-question",
+      "set": "quality", "type": "refusal", "persona": "emp_store7", "refusal_outcome": "A",
+      "scenario": "Order number missing",
+      "turns": ["Where is my order?"],
+      "expected": "Outcome A: exactly one clarifying question asking for the order number; no tool call; only the intake model call.",
+      "checks": [
+        {"kind": "outcome_is", "outcome": "A"},
+        {"kind": "no_tools"},
+        {"kind": "model_calls_equal", "count": 1},
+        {"kind": "reply_contains_any", "values": ["order number"]},
+        {"kind": "reply_not_matches", "pattern": "\\?[\\s\\S]*\\?"}
+      ]
+    },
+    {
+      "id": "out-of-domain-question-declined",
+      "set": "quality", "type": "refusal", "persona": "emp_store7", "refusal_outcome": "B",
+      "scenario": "Out-of-domain question",
+      "turns": ["Can you write me a poem about the sea?"],
+      "expected": "Outcome B: the canned decline text with what the assistant covers; no tool call; only the intake model call.",
+      "checks": [
+        {"kind": "outcome_is", "outcome": "B"},
+        {"kind": "reply_equals_canned", "name": "decline"},
+        {"kind": "no_tools"},
+        {"kind": "model_calls_equal", "count": 1}
+      ]
+    },
+    {
+      "id": "question-the-documents-are-silent-on-bulk-orders",
+      "set": "quality", "type": "refusal", "persona": "emp_store7", "refusal_outcome": "C",
+      "scenario": "Question the documents are silent on",
+      "turns": ["What is NovaMart's policy on bulk corporate orders?"],
+      "expected": "Outcome C: canned no-evidence reply naming the escalation contact from the store operations document; no validator, no composer, no invented specifics.",
+      "checks": [
+        {"kind": "outcome_is", "outcome": "C"},
+        {"kind": "reply_contains_all", "values": ["555-0142"]},
+        {"kind": "agent_not_called", "agent": "validator"},
+        {"kind": "agent_not_called", "agent": "composer"},
+        {"kind": "reply_not_matches", "pattern": "\\d+\\s*(%|percent|per cent|days|units|pieces)|discount"}
+      ]
+    },
+    {
+      "id": "unknown-order-not-found",
+      "set": "quality", "type": "refusal", "persona": "emp_store7", "refusal_outcome": "D",
+      "scenario": "Unknown order",
+      "turns": ["What is the status of order NM-999999?"],
+      "expected": "Outcome D: the uniform not-found text, with no follow-up question and no composer call.",
+      "checks": [
+        {"kind": "outcome_is", "outcome": "D"},
+        {"kind": "reply_equals_canned", "name": "not_found"},
+        {"kind": "agent_not_called", "agent": "composer"},
+        {"kind": "reply_not_matches", "pattern": "\\?"}
+      ]
+    },
+    {
+      "id": "partially-covered-question-low-band",
+      "set": "quality", "type": "refusal", "persona": "emp_store7", "refusal_outcome": "E",
+      "scenario": "Weak coverage answers with Low band",
+      "turns": ["What is the warranty period for apparel, and how do I file a warranty claim?"],
+      "expected": "Outcome E: the claim steps are in the warranty document but the apparel period is not, so a required criterion is uncovered: an answer with a Low band, the caveat and Sources (not a refusal).",
+      "checks": [
+        {"kind": "outcome_is", "outcome": "E"},
+        {"kind": "band_is", "band": "Low"},
+        {"kind": "reply_contains_any", "values": ["may not fully cover"]},
+        {"kind": "reply_contains_any", "values": ["apparel"]},
+        {"kind": "cites", "file": "warranty-policy.md"}
+      ]
+    }
+  ]
+}

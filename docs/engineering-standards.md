@@ -1,6 +1,6 @@
 ---
-version: 4
-architecture_version: 6
+version: 5
+architecture_version: 7
 ---
 
 # Engineering standards (derived rules)
@@ -39,7 +39,7 @@ Derived from `docs/architecture.md` (which interprets `docs/team/principles.md` 
 - `ERR-1` [P-ERR] Errors are handled at the layer architecture section 6 names, never swallowed, and use its error shape.
 - `ERR-2` [P-SEC] No secrets or personal data in logs, error messages, URLs or client bundles. This includes the audit record and the cost record (`ARCH-ERR-1`, `ARCH-EDGE-1`, `ARCH-CFG-1`): no customer names, emails or addresses, and no message text. Secrets only from the source in architecture section 7.
 - `ERR-3` [P-ERR] Pipeline outcomes are the closed set in `ARCH-ERR-2` (A to E), each with its one observable output. No new outcome and no free-form fallback reply; an unexpected failure maps to the generic failure status of `ARCH-ERR-1`, not to a model-written answer. Tool statuses map to outcomes as `ARCH-ERR-1` states.
-- `ERR-4` [P-SEC] A deterministic refusal (outcomes C and D of `ARCH-ERR-2`) is decided in code and is never overturned by a model or validator verdict. A verdict may only lower confidence or request a rewrite. Loop exit and the confidence band are computed in code.
+- `ERR-4` [P-SEC] A deterministic refusal (outcomes C and D of `ARCH-ERR-2`) is decided in code and is never overturned by a model or validator verdict. A verdict may only lower confidence or request a rewrite. Routing, loop exit and the confidence band are computed in code.
 
 ## 4. Conventions
 
@@ -51,7 +51,7 @@ Derived from `docs/architecture.md` (which interprets `docs/team/principles.md` 
 ## 5. Tests and verification
 
 - `TEST-1` [P-TEST] Every requirement or scenario touched has a test, and the test name quotes or references it.
-- `TEST-2` [P-TEST] Test at the public interface, not internals. Cover the error path of every externally facing function. The pipeline decisions (precheck, routing, rubric coverage, confidence composite and band, outcome mapping to A-E, cost) have key-free unit tests with fake model outputs (`ARCH-TEST-1`).
+- `TEST-2` [P-TEST] Test at the public interface, not internals. Cover the error path of every externally facing function. The pipeline decisions (precheck, routing, rubric coverage, confidence composite and band, loop continue-or-exit and best attempt, outcome mapping to A-E, cost) have key-free unit tests with fake model outputs (`ARCH-TEST-1`).
 - `TEST-3` [P-TEST] Before reporting done: lint, type-check, tests and build, each exactly as `process.yaml` (`stack.commands`) defines it, all pass. Show the commands and results. Do not substitute a weaker command for the type-check.
 - `TEST-4` [P-TEST] Agent behavior has evals as architecture `ARCH-TEST-3` requires: every agent-behavior scenario maps to an eval case, and the eval command and pass rates are shown in the report next to the `TEST-3` results. Evals are live-only and are never run (nor any command that calls the model) until the owner has supplied the API key and says to run; until then report "authored, not run" and leave the task open. A failing eval fails the task.
 
@@ -66,10 +66,11 @@ Derived from `docs/architecture.md` (which interprets `docs/team/principles.md` 
 ## 7. Agent pipeline and trust
 
 - `AGENT-1` [P-SEC] Only the `retrieval` and `order` agents may be given tools (`ARCH-MOD-5`). Intake, validator and composer have none. No agent other than those two touches order data, and order data is reached only through a tool that calls the authorization choke point first (`ARCH-MOD-4`).
-- `AGENT-2` [P-DEP] Delegation between agents is plain-Python routing in the deterministic orchestrator (`ARCH-LAYER-1`, section 10 patterns). No LLM-driven delegation: no `AgentTool`, transfer, or model-chosen `sub_agents`. Built-in tools are never mixed with function tools in one agent.
+- `AGENT-2` [P-DEP] Delegation between agents is plain-Python routing in the deterministic orchestrator, an ADK `Workflow` graph whose function nodes call pure `pipeline/` functions and emit the route value over static edges (`ARCH-LAYER-1`, section 10 patterns). Function nodes only adapt: read state, call one pure function, write state, emit a route. No LLM-driven delegation: no `AgentTool`, transfer, model-chosen `sub_agents`, or agent nodes in `chat` or `task` mode. Built-in tools are never mixed with function tools in one agent.
 - `AGENT-3` [P-SEC] Sources, the confidence band and diagram blocks are written or verified by code from chunk metadata (section 10 patterns). The model never writes citations, the band or diagrams; model text containing them is replaced or rejected by code.
 - `AGENT-4` [P-BOUND] Retrieved document text and every model-produced intermediate (rubric, verdict, rewritten query) are data only (`ARCH-BOUND-1`): passed as message content, parsed into typed models, never templated into instruction text and never obeyed as instructions. The raw user message passes the code precheck before any model call.
 - `AGENT-5` [P-EDGE] Per-turn and per-session cost is recorded by code in `pipeline/cost` from the model's `usage_metadata` and the configured price table (`ARCH-CFG-1`), never estimated or reported by the model. `NOVAMART_SHOW_COST` hides display only; recording stays on. The record carries no PII (`ERR-2`).
+- `AGENT-6` [P-EVOLVE] No API marked deprecated in the pinned ADK version (`LoopAgent`, `SequentialAgent`, `ParallelAgent`, YAML agent configs); compose with `Workflow`. The retrieval-validator loop is a routed cycle: its exit and its maximum number of passes come from the pure loop decision in `pipeline/` (config `max_iterations`), never from a model-set `escalate` and never from an unconditional cycle. Code in the section 11 Migration scope is exempt until its target version.
 
 ## Exceptions
 
@@ -83,8 +84,9 @@ Standards self-check
 - SIZE: within architecture limits, responsibilities separated ..... yes|no
 - TYPE/ERR: boundary parsing, strict types, closed outcomes, refusals
   in code, no secrets or PII in logs (audit and cost too) ........... yes|no
-- AGENT: tools only on retrieval/order, code routing, sources/band/
-  diagrams/cost by code, model output treated as data .............. yes|no|n/a
+- AGENT: tools only on retrieval/order, code routing and loop exit,
+  sources/band/diagrams/cost by code, model output treated as data,
+  no deprecated ADK API ............................................ yes|no|n/a
 - CONV: sources for config/text/design, reuse, dependency note ..... yes|no
 - TEST: each scenario has a named test; lint+types+tests green ..... yes|no
 - EVAL: scenarios have eval cases; authored, not run, or rates yes|no|n/a

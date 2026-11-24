@@ -1,0 +1,3026 @@
+{
+  "decisions": [
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "At backend/",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/design.md",
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "1.1",
+          "9.1"
+        ],
+        "depends_on": [],
+        "id": "AG-1",
+        "kind": "decision",
+        "lens": "grounding",
+        "options": [
+          {
+            "description": "Keep .env and .env.example in backend/src/novamart_agent/ (matches the existing file); list it in D8 and tasks 1.1 and 9.1.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "pkg",
+            "label": "Inside the package",
+            "recommended": false
+          },
+          {
+            "description": "Move .env.example to backend/.env.example (next to pyproject.toml, outside the importable package); document it in D8, 1.1 and 9.1. ADK still finds it by walking up.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "backend",
+            "label": "At backend/",
+            "recommended": true
+          }
+        ],
+        "question": "Where should the developer put the real .env (holding GOOGLE_API_KEY) so that both `adk run` and `adk web backend/src` pick it up, and where should .env.example live? ADK loads the first .env found walking up from backend/src/novamart_agent/, so backend/src/novamart_agent/.env, backend/src/.env and backend/.env all work, but D8, task 1.1 and the README task (9.1) name none.",
+        "quotes": [
+          {
+            "file": "backend/src/novamart_agent/.env.example",
+            "line": 2,
+            "text": "GOOGLE_API_KEY="
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 24,
+            "text": "with `backend/pyproject.toml`, `.gitignore` (excluding `.env` and cache) and `.env.example`; verify `pip install -e backend` succeeds and `adk web backend/src` lists the agent and `.env` is ignored by git"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 77,
+            "text": "AI Studio via `GOOGLE_API_KEY`; Vertex-based via `GOOGLE_GENAI_USE_ENTERPRISE=TRUE` plus project and location"
+          }
+        ],
+        "severity": "clarifying",
+        "source": "agent",
+        "status": "open",
+        "summary": "No artifact says where the real .env goes. The only .env.example sits inside the package directory, which D8 does not list, and task 1.1 gives no path. ADK does find a .env there (it walks up from the agent folder), but neither the tasks nor the README task state the location."
+      },
+      "id": "AG-1",
+      "option": "backend",
+      "question": "Where should the developer put the real .env (holding GOOGLE_API_KEY) so that both `adk run` and `adk web backend/src` pick it up, and where should .env.example live? ADK loads the first .env found walking up from backend/src/novamart_agent/, so backend/src/novamart_agent/.env, backend/src/.env and backend/.env all work, but D8, task 1.1 and the README task (9.1) name none.",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "15 to 18",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/specs/agent-evaluation/spec.md",
+        "openspec/changes/novamart-rag-agent/proposal.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "8.2"
+        ],
+        "depends_on": [],
+        "id": "AG-10",
+        "kind": "decision",
+        "lens": "contradiction",
+        "options": [
+          {
+            "description": "Change task 8.2 to 12 to 15 total, with the five refusal outcomes counted inside the set.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "spec",
+            "label": "12 to 15",
+            "recommended": false
+          },
+          {
+            "description": "Change the spec and proposal to 15 to 18 to match the added refusal-outcome cases.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/specs/agent-evaluation/spec.md",
+              "openspec/changes/novamart-rag-agent/proposal.md"
+            ],
+            "id": "tasks",
+            "label": "15 to 18",
+            "recommended": true
+          }
+        ],
+        "question": "How many quality cases should the evaluation set hold: 12 to 15 as in the spec and proposal, or 15 to 18 as in task 8.2? The count changes if the five refusal outcomes are extra cases on top of the question types.",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/specs/agent-evaluation/spec.md",
+            "line": 8,
+            "text": "The project SHALL include an evaluation set of 12 to 15 questions"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 105,
+            "text": "Write 15 to 18 quality cases across policy, product, order and combined questions"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/proposal.md",
+            "line": 12,
+            "text": "Evaluation suite: ~12-15 quality questions and ~6 security cases"
+          }
+        ],
+        "severity": "clarifying",
+        "source": "agent",
+        "status": "open",
+        "summary": "The quality set size is 12 to 15 in the spec and proposal and 15 to 18 in task 8.2."
+      },
+      "id": "AG-10",
+      "option": "tasks",
+      "question": "How many quality cases should the evaluation set hold: 12 to 15 as in the spec and proposal, or 15 to 18 as in task 8.2? The count changes if the five refusal outcomes are extra cases on top of the question types.",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Pass = order part correct, policy part flagged",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/specs/agent-evaluation/spec.md",
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "8.2"
+        ],
+        "depends_on": [],
+        "id": "AG-11",
+        "kind": "decision",
+        "lens": "coverage",
+        "options": [
+          {
+            "description": "Combined cases pass when the order answer is correct and the reply says it cannot answer the policy part. They are labelled as known-limitation cases. The spec's 'needs both' type is reworded.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/specs/agent-evaluation/spec.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "limitation-pass",
+            "label": "Pass = order part correct, policy part flagged",
+            "recommended": true
+          },
+          {
+            "description": "The set requires three types. Combined questions appear only as documented-limitation cases outside the pass rate.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/specs/agent-evaluation/spec.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "drop-type",
+            "label": "Drop 'needs both' from the required types",
+            "recommended": false
+          },
+          {
+            "description": "Reopen the OQ-2 decision and merge the order and knowledge paths.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "build-both",
+            "label": "Support combined answers",
+            "recommended": false
+          }
+        ],
+        "question": "What does a passing 'needs both' (combined) eval case look like, given combined questions are served by the order path only? The quality set must have at least two such cases.",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/specs/agent-evaluation/spec.md",
+            "line": 8,
+            "text": "needs both, or unanswerable"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/specs/agent-evaluation/spec.md",
+            "line": 12,
+            "text": "it contains at least two cases of each of the four question types"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 134,
+            "text": "A message that mixes an order question with a free-text policy question is handled by the order path only in this revision"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 105,
+            "text": "across policy, product, order and combined questions"
+          }
+        ],
+        "severity": "clarifying",
+        "source": "agent",
+        "status": "open",
+        "summary": "The eval spec requires at least two 'needs both' cases and task 8.2 includes combined questions. D14 serves combined questions from the order path only, so the policy half cannot be answered. No task or spec says what a passing combined case is."
+      },
+      "id": "AG-11",
+      "option": "limitation-pass",
+      "question": "What does a passing 'needs both' (combined) eval case look like, given combined questions are served by the order path only? The quality set must have at least two such cases.",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Test values are valid, not equal to design",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "6.1"
+        ],
+        "depends_on": [],
+        "id": "AG-15",
+        "kind": "decision",
+        "lens": "ambiguity",
+        "options": [
+          {
+            "description": "Reword task 6.1 so the test checks the shipped defaults load and satisfy invariants (weights sum to 1, thresholds ordered, max_iterations=2).",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "reword",
+            "label": "Test values are valid, not equal to design",
+            "recommended": true
+          },
+          {
+            "description": "Add concrete starting defaults to D11 and D12 so the test can match them. Tuning in 8.5 would then edit the design.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md"
+            ],
+            "id": "state-values",
+            "label": "Write the starting values into the design",
+            "recommended": false
+          }
+        ],
+        "question": "What should task 6.1's defaults check compare against, given D11 and D12 give only max_iterations=2 as a concrete default and the rest are chosen at build?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 79,
+            "text": "verify tests that bad values fail at load and defaults match design D11 and D12"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 118,
+            "text": "Defaults are chosen at build time and tuned on the eval set (tasks chunk 8)."
+          }
+        ],
+        "severity": "clarifying",
+        "source": "agent",
+        "status": "open",
+        "summary": "Task 6.1 verifies that defaults 'match design D11 and D12', but those decisions set no default values for weights or thresholds, and OQ-3 says they are chosen at build. The test has nothing to compare against."
+      },
+      "id": "AG-15",
+      "option": "reword",
+      "question": "What should task 6.1's defaults check compare against, given D11 and D12 give only max_iterations=2 as a concrete default and the rest are chosen at build?",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Chunk 7 waits for 1.4 results",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "7.2",
+          "7.3",
+          "7.4"
+        ],
+        "depends_on": [],
+        "id": "AG-16",
+        "kind": "decision",
+        "lens": "behavior",
+        "options": [
+          {
+            "description": "Add 1.4 results to the chunk 7 prerequisites in the chunk map and 7.2. Chunk 7 cannot start until the owner has run 1.4.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "gate",
+            "label": "Chunk 7 waits for 1.4 results",
+            "recommended": true
+          },
+          {
+            "description": "Allow chunk 7 to start from documentation-only checks. Reword the design line so it no longer promises resolution before building.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "build-first",
+            "label": "Build against assumptions",
+            "recommended": false
+          }
+        ],
+        "question": "Must the owner-run results of task 1.4 exist before chunk 7 starts, or may agents be built against the unverified ADK assumptions and corrected later?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 188,
+            "text": "Resolved in task 1.4 before any agent is built."
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 27,
+            "text": "(authored, not run until the owner supplies the key and says run)"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 13,
+            "text": "7 needs 3, 4, 5, 6"
+          }
+        ],
+        "severity": "clarifying",
+        "source": "agent",
+        "status": "open",
+        "summary": "The design says the ADK assumption checks are resolved in task 1.4 before any agent is built. Task 1.4 runs live only when the owner supplies the key, and the chunk map does not make chunk 7 wait on its result, so chunk 7 could start with the assumptions still unchecked."
+      },
+      "id": "AG-16",
+      "option": "gate",
+      "question": "Must the owner-run results of task 1.4 exist before chunk 7 starts, or may agents be built against the unverified ADK assumptions and corrected later?",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Denials end the turn with a fixed text",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/design.md",
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "7.6"
+        ],
+        "depends_on": [],
+        "id": "AG-17",
+        "kind": "decision",
+        "lens": "behavior",
+        "options": [
+          {
+            "description": "Require equal call count and equal prompt tokens (identical tool result), and drop the output-token equality or compare against a tolerance. Reword the spec scenario and task 7.6.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/specs/cost-reporting/spec.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "calls-only",
+            "label": "Equal call count, token totals within the same recorded usage fields",
+            "recommended": false
+          },
+          {
+            "description": "Make the uniform not-found text code-produced, so no further model call differs by cause. Equality then follows from the code path and a key-free test with fake usage covers it.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "fixed-text",
+            "label": "Denials end the turn with a fixed text",
+            "recommended": true
+          }
+        ],
+        "question": "How should the denial-parity check be made enforceable without depending on identical model output token counts?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/specs/cost-reporting/spec.md",
+            "line": 52,
+            "text": "- **THEN** both replies show the same call count and token totals"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 96,
+            "text": "and by a test that nonexistent and out-of-scope order replies show equal call counts and tokens"
+          }
+        ],
+        "severity": "clarifying",
+        "source": "agent",
+        "status": "open",
+        "summary": "The denial-parity requirement demands equal call counts and token totals for nonexistent and out-of-scope orders. Task 7.6 verifies it with 'a test', but token totals come from model output that can differ even at temperature 0, and a real count needs a live call, which is owner-gated."
+      },
+      "id": "AG-17",
+      "option": "fixed-text",
+      "question": "How should the denial-parity check be made enforceable without depending on identical model output token counts?",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Add it to task 6.3 and 7.3",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [],
+        "depends_on": [],
+        "id": "AG-18",
+        "kind": "decision",
+        "lens": "coverage",
+        "options": [
+          {
+            "description": "Add a unit test that a worse second pass does not replace a better first pass.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "add-test",
+            "label": "Add it to task 6.3 and 7.3",
+            "recommended": true
+          },
+          {
+            "description": "Remove the best-attempt sentence from D11 to simplify state handling.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md"
+            ],
+            "id": "drop",
+            "label": "Use the last attempt",
+            "recommended": false
+          }
+        ],
+        "question": "Should best-attempt selection be verified by a task, or dropped from the design?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 114,
+            "text": "The loop keeps the best-scoring attempt in state; the composer uses that one, not necessarily the last."
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 81,
+            "text": "verify tests for each band, the cap, the downgrade-only rule, and iteration exhaustion"
+          }
+        ],
+        "severity": "clarifying",
+        "source": "agent",
+        "status": "open",
+        "summary": "D11 says the loop keeps the best-scoring attempt and the composer uses it, not necessarily the last. No task builds or tests that rule."
+      },
+      "id": "AG-18",
+      "option": "add-test",
+      "question": "Should best-attempt selection be verified by a task, or dropped from the design?",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Set the flag off explicitly and pin ADK",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/design.md",
+        "openspec/changes/novamart-rag-agent/tasks.md",
+        "backend/pyproject.toml"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "1.1",
+          "1.3",
+          "9.1"
+        ],
+        "depends_on": [],
+        "id": "AG-2",
+        "kind": "decision",
+        "lens": "ambiguity",
+        "options": [
+          {
+            "description": "Add GOOGLE_GENAI_USE_ENTERPRISE=FALSE (and the legacy VERTEXAI=FALSE) to .env.example, state the AI Studio setup in D6 and 9.1, and pin google-adk to the version verified in task 1.3.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md",
+              "backend/pyproject.toml"
+            ],
+            "id": "explicit-off",
+            "label": "Set the flag off explicitly and pin ADK",
+            "recommended": true
+          },
+          {
+            "description": "Keep only GOOGLE_API_KEY; add a README line that no Vertex flag may be set. No pin.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "key-only",
+            "label": "Key only, document the caveat",
+            "recommended": false
+          }
+        ],
+        "question": "Which backend variable(s) must .env.example and the README set for the free AI Studio key, and should google-adk be version-pinned? Today only GOOGLE_API_KEY is listed; an ambient GOOGLE_GENAI_USE_VERTEXAI or GOOGLE_GENAI_USE_ENTERPRISE set to true in the developer shell would route to Vertex and fail with an AI Studio key.",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 77,
+            "text": "(`GOOGLE_GENAI_USE_VERTEXAI` is documented as equivalent and is the safe choice on older ADK)"
+          },
+          {
+            "file": "backend/src/novamart_agent/.env.example",
+            "line": 2,
+            "text": "GOOGLE_API_KEY="
+          },
+          {
+            "file": "backend/pyproject.toml",
+            "line": 11,
+            "text": "\"google-adk\","
+          }
+        ],
+        "severity": "clarifying",
+        "source": "agent",
+        "status": "open",
+        "summary": "The AI Studio backend selection is not stated. D6 describes the Vertex switch with two variable names but never says what to set for AI Studio. .env.example lists only GOOGLE_API_KEY, and pyproject leaves google-adk unpinned, so which variable applies depends on the installed ADK (the local venv has 2.15.0, which uses GOOGLE_GENAI_USE_ENTERPRISE)."
+      },
+      "id": "AG-2",
+      "option": "explicit-off",
+      "question": "Which backend variable(s) must .env.example and the README set for the free AI Studio key, and should google-adk be version-pinned? Today only GOOGLE_API_KEY is listed; an ambient GOOGLE_GENAI_USE_VERTEXAI or GOOGLE_GENAI_USE_ENTERPRISE set to true in the developer shell would route to Vertex and fail with an AI Studio key.",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Orchestrator appends the line",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/design.md",
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "6.5",
+          "7.4",
+          "7.6"
+        ],
+        "id": "AG-20",
+        "kind": "decision",
+        "lens": "behavior",
+        "options": [
+          {
+            "description": "The BaseAgent orchestrator assembles the final reply (cost line, Sources, band) in code after the last sub-agent or decline, on every route; the composer callback only counts its own usage first.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "orchestrator",
+            "label": "Orchestrator appends the line",
+            "recommended": true
+          },
+          {
+            "description": "Route declines through a composer pass that makes no model call but runs the same code path. Needs the design to say how a non-model path triggers the callback.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md"
+            ],
+            "id": "always-compose",
+            "label": "Always run a composer step",
+            "recommended": false
+          },
+          {
+            "description": "Show the cost line only when a model call occurred; narrows the cost-reporting spec scenario for declined messages.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/specs/cost-reporting/spec.md",
+              "openspec/changes/novamart-rag-agent/design.md"
+            ],
+            "id": "drop-line",
+            "label": "No line on no-call routes",
+            "recommended": false
+          }
+        ],
+        "question": "Precheck declines and the fixed not-found text end the turn without any model call, so the composer's after-model callback never fires. Where should the cost line (and for declines, the canned wording) be appended so it appears on every route?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 156,
+            "text": "so it is assembled in the composer's after-model callback, and the model never writes a figure:"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 161,
+            "text": "Precheck declines show `$0.00 (0 calls)`. The order path (D14, D13 case D) shows the same line"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 128,
+            "text": "so that the turn ends with no further model call that could differ by cause"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/specs/cost-reporting/spec.md",
+            "line": 16,
+            "text": "- **THEN** the reported cost is $0.00 with 0 calls"
+          }
+        ],
+        "severity": "blocking",
+        "source": "agent",
+        "status": "open",
+        "summary": "The cost line (and Sources/band) is appended in the composer's after-model callback, but precheck declines and code-produced denials make no model call, so no callback runs and the required '$0.00 (0 calls)' line cannot appear."
+      },
+      "id": "AG-20",
+      "option": "orchestrator",
+      "question": "Precheck declines and the fixed not-found text end the turn without any model call, so the composer's after-model callback never fires. Where should the cost line (and for declines, the canned wording) be appended so it appears on every route?",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Code lookup from the store operations document",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/design.md",
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "4.3",
+          "7.4"
+        ],
+        "id": "AG-21",
+        "kind": "decision",
+        "lens": "coverage",
+        "options": [
+          {
+            "description": "Add a small non-model lookup (front-matter field in the store operations doc, read at load) used by the code that assembles case C and eligibility-undeterminable replies; add it to task 4.3 or a new task.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "frontmatter-lookup",
+            "label": "Code lookup from the store operations document",
+            "recommended": true
+          },
+          {
+            "description": "On case C run a second fixed-query retrieval of the escalation section, outside the threshold gate.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "always-retrieve",
+            "label": "Retrieve the escalation section on every refusal",
+            "recommended": false
+          }
+        ],
+        "question": "When the gate returns no_answer there are no retrieved chunks, composer has no tools, and ARCH-CFG-2 forbids hard-coding policy facts. How does the escalation contact reach the case C (and order-eligibility 'cannot determine') reply?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 127,
+            "text": "give the escalation contact from the policy docs, and up to 3 closest document titles"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/specs/policy-retrieval/spec.md",
+            "line": 23,
+            "text": "- **THEN** the assistant says it has no information on this and names the escalation contact from the store operations document"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 115,
+            "text": "the loop exits at once with case C (D13) and no query rewrite is attempted, because the validator has no chunks to judge"
+          }
+        ],
+        "severity": "blocking",
+        "source": "agent",
+        "status": "open",
+        "summary": "Refusal case C and the 'no information' scenarios must name the escalation contact from the documents, but case C is reached only when search_policy returned no_answer (no chunks), and no task or design step fetches the contact."
+      },
+      "id": "AG-21",
+      "option": "frontmatter-lookup",
+      "question": "When the gate returns no_answer there are no retrieved chunks, composer has no tools, and ARCH-CFG-2 forbids hard-coding policy facts. How does the escalation contact reach the case C (and order-eligibility 'cannot determine') reply?",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Rubric flag, code-appended note",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/design.md",
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "7.4",
+          "8.2"
+        ],
+        "id": "AG-22",
+        "kind": "decision",
+        "lens": "coverage",
+        "options": [
+          {
+            "description": "Intake marks unanswered policy criteria; code appends a fixed limitation sentence on the order route. Testable key-free.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "rubric-flag",
+            "label": "Rubric flag, code-appended note",
+            "recommended": true
+          },
+          {
+            "description": "Rely on prompt wording in 7.1/7.4; only eval-verified.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "prompt-only",
+            "label": "Order and composer prompts instruct it",
+            "recommended": false
+          }
+        ],
+        "question": "Who makes the reply to a combined order-and-policy question say that the policy part is not answered: the intake rubric (a flag the composer reads), the order agent prompt, or a fixed code suffix?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 134,
+            "text": "is handled by the order path only in this revision (see Open Questions)."
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/specs/agent-evaluation/spec.md",
+            "line": 16,
+            "text": "it passes only if the order part is answered correctly and the reply says it cannot answer the policy part"
+          }
+        ],
+        "severity": "clarifying",
+        "source": "agent",
+        "status": "open",
+        "summary": "A combined question must pass only if the reply says it cannot answer the policy part, but no design step or task makes the order path produce that statement."
+      },
+      "id": "AG-22",
+      "option": "rubric-flag",
+      "question": "Who makes the reply to a combined order-and-policy question say that the policy part is not answered: the intake rubric (a flag the composer reads), the order agent prompt, or a fixed code suffix?",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Canned text from code",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/design.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "7.4"
+        ],
+        "id": "AG-23",
+        "kind": "decision",
+        "lens": "contradiction",
+        "options": [
+          {
+            "description": "Update D4 to match D13 (code-assembled case C, composer skipped or no-call); consistent with deterministic refusal.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md"
+            ],
+            "id": "canned",
+            "label": "Canned text from code",
+            "recommended": true
+          },
+          {
+            "description": "Update D11/D13 so case C goes through the composer prompt; costs a model call per refusal.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md"
+            ],
+            "id": "model-declines",
+            "label": "Composer model writes the decline",
+            "recommended": false
+          }
+        ],
+        "question": "On no_answer, is the decline text written by a model call (prompt rule) or produced by code from canned wording? D4 and D11/D13 describe different mechanisms with different cost and call counts.",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 69,
+            "text": "Below threshold the tool returns `no_answer` and the prompt instructs the model to decline and point to escalation."
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 115,
+            "text": "the loop exits at once with case C (D13)"
+          }
+        ],
+        "severity": "clarifying",
+        "source": "agent",
+        "status": "open",
+        "summary": "D4 says the prompt tells the model to decline on no_answer, but D11/D13 exit the loop at once and produce case C from code/canned wording, with no model step after the gate."
+      },
+      "id": "AG-23",
+      "option": "canned",
+      "question": "On no_answer, is the decline text written by a model call (prompt rule) or produced by code from canned wording? D4 and D11/D13 describe different mechanisms with different cost and call counts.",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Name a mechanism and verify it in 1.4",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/design.md",
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "7.3",
+          "7.4",
+          "7.6"
+        ],
+        "depends_on": [],
+        "id": "AG-24",
+        "kind": "decision",
+        "lens": "behavior",
+        "options": [
+          {
+            "description": "State in D13/D4 that an after-tool callback (or the tool context's skip-summarization or escalate action) halts the agent at no_answer/not_found and hands off to the orchestrator; add that ADK behaviour to the 1.4 verification list and to 7.3/7.4 checks.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "verify-and-name",
+            "label": "Name a mechanism and verify it in 1.4",
+            "recommended": true
+          },
+          {
+            "description": "Allow the one summarising call but define the reply as code-produced regardless of its text; relax the cost-parity wording to call counts only for the same route.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md",
+              "openspec/changes/novamart-rag-agent/specs/cost-reporting/spec.md"
+            ],
+            "id": "count-it",
+            "label": "Accept the extra call and make it parity-safe",
+            "recommended": false
+          },
+          {
+            "description": "Run the tool call from the orchestrator when the route and order id are already structured; changes D1 (order agent) and D16.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "code-tool-call",
+            "label": "Orchestrator calls the guarded tools in code for these cases",
+            "recommended": false
+          }
+        ],
+        "question": "The retrieval and order agents are LLM agents holding a tool. After the tool returns no_answer or not_found, a standard LlmAgent calls the model again to turn the tool result into text, which would add a model call that the design says does not happen (and that could differ by cause). Which mechanism ends the turn at the tool result, and where is it verified?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 128,
+            "text": "so that the turn ends with no further model call that could differ by cause"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 69,
+            "text": "Below threshold the tool returns `no_answer` and code produces the decline from canned wording (D13 case C), with no model call."
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 96,
+            "text": "end the turn with no further model call, and show equal call counts and tokens"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 27,
+            "text": "`LoopAgent` exit by `escalate`, custom `BaseAgent` with branching, `output_schema` disabling tools, state shared across sub-agents of one orchestrator, argument mutation in `before_tool_callback`, `{key}` instruction templating, `usage_metadata` fields and thinking-token billing"
+          }
+        ],
+        "severity": "blocking",
+        "source": "agent",
+        "status": "open",
+        "summary": "Design and tasks promise that case C and case D end the turn with no model call after the tool returns, but the retrieval and order agents are LLM agents with a tool. The design names no mechanism that stops the agent from calling the model again on the tool result, and task 1.4 does not list it for verification. The claimed call counts (and the denial-parity test) rest on it."
+      },
+      "id": "AG-24",
+      "option": "verify-and-name",
+      "question": "The retrieval and order agents are LLM agents holding a tool. After the tool returns no_answer or not_found, a standard LlmAgent calls the model again to turn the tool result into text, which would add a model call that the design says does not happen (and that could differ by cause). Which mechanism ends the turn at the tool result, and where is it verified?",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Call count equal, tokens not asserted across different messages",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/specs/cost-reporting/spec.md",
+        "openspec/changes/novamart-rag-agent/design.md",
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "7.6"
+        ],
+        "depends_on": [
+          "AG-24"
+        ],
+        "id": "AG-25",
+        "kind": "decision",
+        "lens": "ambiguity",
+        "options": [
+          {
+            "description": "Spec and design promise equal call counts and an identical code path; token totals are compared only for the same message text in the eval. Reword the spec scenario and D17.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/specs/cost-reporting/spec.md",
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "calls-and-fixed-path",
+            "label": "Call count equal, tokens not asserted across different messages",
+            "recommended": true
+          },
+          {
+            "description": "On route D the cost line omits token totals so nothing can differ; narrows the cost-line requirement.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/specs/cost-reporting/spec.md",
+              "openspec/changes/novamart-rag-agent/design.md"
+            ],
+            "id": "hide-tokens-on-denial",
+            "label": "Denial replies show only a call-count line",
+            "recommended": false
+          },
+          {
+            "description": "Keep the wording and accept that the live eval may show token differences.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md"
+            ],
+            "id": "keep",
+            "label": "Keep as written",
+            "recommended": false
+          }
+        ],
+        "question": "What equality does the denial-parity rule on the cost line actually guarantee: identical call counts only, identical token totals for the same user message, or identical tokens whatever the message? The key-free fake-usage test cannot show the last one, and a live run will differ by prompt text.",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 161,
+            "text": "so the call count and tokens for \"nonexistent\", \"out of scope\" and \"malformed\" are equal by construction, and a key-free test with fake usage records checks it"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/specs/cost-reporting/spec.md",
+            "line": 52,
+            "text": "- **THEN** both replies show the same call count and token totals"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/specs/cost-reporting/spec.md",
+            "line": 48,
+            "text": "The cost line SHALL be identical in structure and magnitude for a nonexistent order and an out-of-scope order."
+          }
+        ],
+        "severity": "clarifying",
+        "source": "agent",
+        "status": "open",
+        "summary": "The cost-reporting spec requires equal token totals for a nonexistent and an out-of-scope order, and the design says this holds 'by construction'. Token totals include the intake and order-agent prompts and outputs, which depend on the user's text and the model's tool-call arguments, so they are not equal by construction. The key-free test with fake usage records can only prove the code path adds no extra calls, not the stated equality."
+      },
+      "id": "AG-25",
+      "option": "calls-and-fixed-path",
+      "question": "What equality does the denial-parity rule on the cost line actually guarantee: identical call counts only, identical token totals for the same user message, or identical tokens whatever the message? The key-free fake-usage test cannot show the last one, and a live run will differ by prompt text.",
+      "source": "defaulted",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Code produces a canned reply, like case C",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/design.md",
+        "openspec/changes/novamart-rag-agent/tasks.md",
+        "openspec/changes/novamart-rag-agent/specs/order-tools/spec.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "4.3",
+          "5.2",
+          "7.4"
+        ],
+        "depends_on": [],
+        "id": "AG-26",
+        "kind": "decision",
+        "lens": "coverage",
+        "options": [
+          {
+            "description": "Add a not-determinable status to the eligibility result, have the orchestrator emit canned wording plus the contact from the 4.3 lookup with no composer, and reword the order-tools scenario trigger to 'policy parameters cannot be read'. Add the path to 5.2 and 7.4.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md",
+              "openspec/changes/novamart-rag-agent/specs/order-tools/spec.md"
+            ],
+            "id": "code-canned",
+            "label": "Code produces a canned reply, like case C",
+            "recommended": true
+          },
+          {
+            "description": "Composer receives the contact from the lookup and phrases the reply; this adds a model-written path and cost to case D-adjacent replies.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "composer-with-contact",
+            "label": "Composer writes it, contact passed as data",
+            "recommended": false
+          }
+        ],
+        "question": "When check_return_eligibility cannot determine eligibility (policy parameters missing or unreadable), which component produces the reply with the escalation contact, and what is the spec trigger now that the order path reads front-matter parameters rather than retrieving policy with a confidence score?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 127,
+            "text": "the same lookup serves the order-eligibility \"cannot determine\" reply."
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 62,
+            "text": "used by the code that assembles case C and order-eligibility \"cannot determine\" replies"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 134,
+            "text": "so a normal eligibility answer needs no `search_policy` call"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/specs/order-tools/spec.md",
+            "line": 37,
+            "text": "- **WHEN** the relevant policy cannot be retrieved with sufficient confidence"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 94,
+            "text": "Implement the order agent and the composer (formats by `doc_type`, order label, Low-band caveat; declines and clarifications are canned text from code and skip the composer)"
+          }
+        ],
+        "severity": "blocking",
+        "source": "agent",
+        "status": "open",
+        "summary": "The order-eligibility 'cannot determine' reply is said to be assembled by code with the escalation contact (D13, 4.3), but no later task builds that path: D15 and 7.4 have the model-based composer format order replies, and the spec still defines the trigger as failed policy retrieval, which the order path (D5, D14) no longer performs."
+      },
+      "id": "AG-26",
+      "option": "code-canned",
+      "question": "When check_return_eligibility cannot determine eligibility (policy parameters missing or unreadable), which component produces the reply with the escalation contact, and what is the spec trigger now that the order path reads front-matter parameters rather than retrieving policy with a confidence score?",
+      "source": "defaulted",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Extend 2.1",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "2.1",
+          "4.3"
+        ],
+        "depends_on": [],
+        "id": "AG-27",
+        "kind": "decision",
+        "lens": "coverage",
+        "options": [
+          {
+            "description": "Add the document, its all-staff audience and the contact field to 2.1, with a verify step that the field parses.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "extend-2.1",
+            "label": "Extend 2.1",
+            "recommended": true
+          },
+          {
+            "description": "4.3 failing loudly on a missing field surfaces it at build time.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "leave",
+            "label": "Leave to the implementer",
+            "recommended": false
+          }
+        ],
+        "question": "Should task 2.1 be extended to require a store operations document (audience: all staff) carrying an escalation-contact front-matter field, so that 4.3 has data to read and a test target?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 62,
+            "text": "a non-model lookup of the escalation contact from a front-matter field in the store operations document, read at load"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 37,
+            "text": "Write 8 short policy documents with audience and `doc_type: policy` front-matter, including a returns document with structured window and exclusion parameters, one category exception, one manager-only document, and deliberate gaps"
+          }
+        ],
+        "severity": "clarifying",
+        "source": "agent",
+        "status": "open",
+        "summary": "Task 4.3 reads the escalation contact from a front-matter field of the store operations document and fails loudly if missing, but task 2.1 (which writes the policy documents) does not require a store operations document or that field, so nothing creates the input 4.3 consumes."
+      },
+      "id": "AG-27",
+      "option": "extend-2.1",
+      "question": "Should task 2.1 be extended to require a store operations document (audience: all staff) carrying an escalation-contact front-matter field, so that 4.3 has data to read and a test target?",
+      "source": "defaulted",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Cover every route",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "7.6"
+        ],
+        "depends_on": [],
+        "id": "AG-28",
+        "kind": "decision",
+        "lens": "coverage",
+        "options": [
+          {
+            "description": "Extend 7.6 to assert the cost line (flag on) and its absence (flag off) for each outcome A to E.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "all-routes",
+            "label": "Cover every route",
+            "recommended": true
+          },
+          {
+            "description": "The orchestrator assembly is one code path, so three samples are enough.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md"
+            ],
+            "id": "as-is",
+            "label": "Keep three routes",
+            "recommended": false
+          }
+        ],
+        "question": "Should the key-free test in task 7.6 cover every route in D13 (A, B from intake, C, D, E and the eligibility-undeterminable reply) rather than only three?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 161,
+            "text": "- **Every route shows it.** Precheck declines show `$0.00 (0 calls)`."
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 96,
+            "text": "and that precheck declines, case C and the not-found text show the cost line with the flag on"
+          }
+        ],
+        "severity": "clarifying",
+        "source": "agent",
+        "status": "open",
+        "summary": "D15 and D17 say the orchestrator appends the cost line on every route, but the key-free check in 7.6 names only precheck declines, case C and the not-found text. Clarification (A), intake out-of-scope decline (B, after a model call), eligibility-undeterminable and normal answers (E) have no key-free assertion that the line is appended."
+      },
+      "id": "AG-28",
+      "option": "all-routes",
+      "question": "Should the key-free test in task 7.6 cover every route in D13 (A, B from intake, C, D, E and the eligibility-undeterminable reply) rather than only three?",
+      "source": "defaulted",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Title and path from the document id",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/design.md",
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "6.4",
+          "7.4"
+        ],
+        "depends_on": [],
+        "id": "AG-3",
+        "kind": "decision",
+        "lens": "ambiguity",
+        "options": [
+          {
+            "description": "Code resolves the id to the document title and path via a loader in rag/ or config; section heading omitted on the order route. Add to 6.4 and 7.4.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "doc-id-lookup",
+            "label": "Title and path from the document id",
+            "recommended": true
+          },
+          {
+            "description": "The order reply carries only the cited id text and the 'from order records' label.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/specs/order-tools/spec.md"
+            ],
+            "id": "no-sources",
+            "label": "No Sources on the order route",
+            "recommended": false
+          }
+        ],
+        "question": "On the order route there are no retrieved chunks, only a policy document id returned by check_return_eligibility. Should code build the Sources entry from that id (title and path only, no section heading), and where does the lookup live?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 143,
+            "text": "order: status or eligibility, the cited policy id, \"from order records\";"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 145,
+            "text": "The Sources list (document title, section heading, file path under `backend/data/docs/`) and the confidence band are appended by code from chunk metadata"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 82,
+            "text": "Sources list from chunk metadata"
+          }
+        ],
+        "severity": "clarifying",
+        "source": "agent",
+        "status": "open",
+        "summary": "Sources are built by code from chunk metadata, but the order route retrieves no chunks, so how the cited policy id on an eligibility reply becomes a Sources entry is unspecified."
+      },
+      "id": "AG-3",
+      "option": "doc-id-lookup",
+      "question": "On the order route there are no retrieved chunks, only a policy document id returned by check_return_eligibility. Should code build the Sources entry from that id (title and path only, no section heading), and where does the lookup live?",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Key-free test with a stub model",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "7.6"
+        ],
+        "depends_on": [],
+        "id": "AG-30",
+        "kind": "decision",
+        "lens": "ambiguity",
+        "options": [
+          {
+            "description": "Run the order agent under ADK with a stub model class that counts calls and returns a scripted tool call; assert one model call per denial cause. Keeps the check key-free and real.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "fake-llm",
+            "label": "Key-free test with a stub model",
+            "recommended": true
+          },
+          {
+            "description": "Key-free test covers only identical text and call-count arithmetic from supplied records; the halt is verified only by the owner-gated run in 7.4.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "split-claim",
+            "label": "Narrow 7.6 and leave the halt to 7.4",
+            "recommended": false
+          }
+        ],
+        "question": "Task 7.6 says a key-free test with fake usage records shows that the three order denials end the turn with no further model call and have equal call counts. Fake usage records only prove how code counts and assembles what it is given, not whether the ADK order agent halts. How should the no-further-model-call part be verified without a key?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 96,
+            "text": "by a key-free test with fake usage records that nonexistent, out-of-scope and malformed order replies are the same code-produced text, end the turn with no further model call, and show equal call counts"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 134,
+            "text": "VERIFY in task 1.4 that this halts without a further model call"
+          }
+        ],
+        "severity": "clarifying",
+        "source": "agent",
+        "status": "open",
+        "summary": "Task 7.6's key-free test uses fake usage records, but one of the things it must show is that the turn ends with no further model call. Fake usage records are test input, so they cannot show whether the ADK agent halted. That behavior is only checked under owner-gated adk run (1.4, 7.3, 7.4), so the key-free claim cannot be enforced as worded."
+      },
+      "id": "AG-30",
+      "option": "fake-llm",
+      "question": "Task 7.6 says a key-free test with fake usage records shows that the three order denials end the turn with no further model call and have equal call counts. Fake usage records only prove how code counts and assembles what it is given, not whether the ADK order agent halts. How should the no-further-model-call part be verified without a key?",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "One of the 8",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "2.1",
+          "4.3"
+        ],
+        "depends_on": [],
+        "id": "AG-31",
+        "kind": "decision",
+        "lens": "contradiction",
+        "options": [
+          {
+            "description": "Corpus becomes 9 policy documents; update the counts in design D8 and wording elsewhere; it may appear in search and closest titles.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "ninth-indexed",
+            "label": "Ninth, indexed normally",
+            "recommended": false
+          },
+          {
+            "description": "Reword 2.1 as 8 documents including the store operations document; indexed normally.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "one-of-eight",
+            "label": "One of the 8",
+            "recommended": true
+          },
+          {
+            "description": "Treat it as a lookup-only file; chunker and closest-titles skip it; state this in 2.1 and 4.3.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md",
+              "openspec/changes/novamart-rag-agent/design.md"
+            ],
+            "id": "not-indexed",
+            "label": "Excluded from retrieval",
+            "recommended": false
+          }
+        ],
+        "question": "Is the new store operations document (escalation contact) one of the 8 policy documents, a ninth document that is indexed and retrievable like the others, or a configuration-style file excluded from search and from the 'closest titles' list?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 37,
+            "text": "Write 8 short policy documents with audience and `doc_type: policy` front-matter"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 37,
+            "text": "add a store operations document (audience: all staff) with an `escalation_contact` front-matter field"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 100,
+            "text": "docs/*.md (8 policy + a few product"
+          }
+        ],
+        "severity": "clarifying",
+        "source": "agent",
+        "status": "open",
+        "summary": "Task 2.1 adds a store operations document on top of 8 policy documents, while the design and proposal size the corpus at eight policy documents. It is unclear whether the store operations document is the eighth, a ninth, or outside the retrieval index (it carries doc_type and audience, so it would appear in 'you might mean' titles and search)."
+      },
+      "id": "AG-31",
+      "option": "one-of-eight",
+      "question": "Is the new store operations document (escalation contact) one of the 8 policy documents, a ninth document that is indexed and retrievable like the others, or a configuration-style file excluded from search and from the 'closest titles' list?",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "7.6 owns the cost line",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "7.2",
+          "7.6"
+        ],
+        "depends_on": [],
+        "id": "AG-32",
+        "kind": "decision",
+        "lens": "coverage",
+        "options": [
+          {
+            "description": "Remove 'cost line' from 7.2's assembly list; 7.6 adds it to the orchestrator on every route.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "move-to-7-6",
+            "label": "7.6 owns the cost line",
+            "recommended": true
+          },
+          {
+            "description": "7.2 builds the cost-line hook (using pipeline/cost from 6.5); 7.6 only wires capture and tests.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "move-to-7-2",
+            "label": "7.2 owns it with a stub",
+            "recommended": false
+          }
+        ],
+        "question": "Which task builds the orchestrator's cost-line assembly: 7.2 (with the rest of final-reply assembly) or 7.6 (cost capture)? Today both claim it, and 7.2 comes before the usage capture it depends on.",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 92,
+            "text": "code assembly of the final reply on every route: canned decline, Sources, band, cost line"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 96,
+            "text": "the orchestrator appends the cost line on every route after the composer's own usage is counted by its callback"
+          }
+        ],
+        "severity": "clarifying",
+        "source": "agent",
+        "status": "open",
+        "summary": "Both 7.2 and 7.6 own appending the cost line on every route in the orchestrator. 7.2 (earlier) lists the cost line as part of the orchestrator's final-reply assembly, but its dependencies (cost capture, 7.6) come later, so the 7.2 adk run check cannot show the line; the ownership is split across two tasks."
+      },
+      "id": "AG-32",
+      "option": "move-to-7-6",
+      "question": "Which task builds the orchestrator's cost-line assembly: 7.2 (with the rest of final-reply assembly) or 7.6 (cost capture)? Today both claim it, and 7.2 comes before the usage capture it depends on.",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Name a README under backend/data/",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "2.1"
+        ],
+        "depends_on": [],
+        "id": "AG-33",
+        "kind": "decision",
+        "lens": "coverage",
+        "options": [
+          {
+            "description": "Name a small README under backend/data/ in task 2.1 that lists the gaps; 9.1 links to it.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "data-readme",
+            "label": "Name a README under backend/data/",
+            "recommended": true
+          },
+          {
+            "description": "Move the 'gaps listed in the README' check from 2.1 to 9.1 and keep 2.1 to parsing and the contact field.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "move-check",
+            "label": "Move the gap-list check to 9.1",
+            "recommended": false
+          }
+        ],
+        "question": "Task 2.1 (synthetic policy documents) must be verified by checking that the deliberate document gaps, such as bulk orders, are listed in the README, but the project README is only authored in task 9.1. Where should the gap list live so that 2.1 can pass when it is built?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 37,
+            "text": "verify each parses, the contact field is read, and the gaps are listed in the README"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 117,
+            "text": "Write the README with setup (`.env` in `backend/`, AI Studio flags, `pip install -e backend[dev]`), persona table"
+          }
+        ],
+        "severity": "clarifying",
+        "source": "agent",
+        "status": "open",
+        "summary": "Task 2.1 verifies that the document gaps are listed in 'the README', but the README is only written in task 9.1, seven chunks later; no task says which README 2.1 means or creates it."
+      },
+      "id": "AG-33",
+      "option": "data-readme",
+      "question": "Task 2.1 (synthetic policy documents) must be verified by checking that the deliberate document gaps, such as bulk orders, are listed in the README, but the project README is only authored in task 9.1. Where should the gap list live so that 2.1 can pass when it is built?",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "After-tool callback on retrieval",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/tasks.md",
+        "openspec/changes/novamart-rag-agent/design.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "7.6"
+        ],
+        "depends_on": [],
+        "id": "AG-4",
+        "kind": "decision",
+        "lens": "coverage",
+        "options": [
+          {
+            "description": "The callback adds the estimate when the result is not a cache hit; add to 7.3 or 7.6 with a test.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md",
+              "openspec/changes/novamart-rag-agent/design.md"
+            ],
+            "id": "after-tool",
+            "label": "After-tool callback on retrieval",
+            "recommended": true
+          },
+          {
+            "description": "The orchestrator estimates from the user message or query hint after the loop; add to 7.6.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md",
+              "openspec/changes/novamart-rag-agent/design.md"
+            ],
+            "id": "orchestrator",
+            "label": "Orchestrator adds it",
+            "recommended": false
+          }
+        ],
+        "question": "Which component records the query-embedding estimate in the per-turn usage list (the search_policy tool, an after-tool callback on retrieval, or the orchestrator), given the embedder lives in the pure rag layer?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 156,
+            "text": "The query embedding is added as an estimate (`count_tokens` or a character heuristic"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 96,
+            "text": "an after-model callback on every LLM agent appends its `usage_metadata` record to the per-turn list in state"
+          }
+        ],
+        "severity": "clarifying",
+        "source": "agent",
+        "status": "open",
+        "summary": "The query-embedding cost estimate is part of every knowledge turn's cost, but the capture task wires only after-model callbacks on LLM agents, so no task puts the embedding record into the per-turn list."
+      },
+      "id": "AG-4",
+      "option": "after-tool",
+      "question": "Which component records the query-embedding estimate in the per-turn usage list (the search_policy tool, an after-tool callback on retrieval, or the orchestrator), given the embedder lives in the pure rag layer?",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Cache-hit flag in tool result, one combined callback",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/tasks.md",
+        "openspec/changes/novamart-rag-agent/design.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "4.2",
+          "7.3",
+          "7.6"
+        ],
+        "depends_on": [],
+        "id": "AG-40",
+        "kind": "decision",
+        "lens": "coverage",
+        "options": [
+          {
+            "description": "search_policy returns an extra embedding_cache_hit field (set by the rag embedder, no ADK import) in every result including no_answer. One combined after-tool callback on retrieval records the embedding estimate first, then does the halt. Add it to 4.2 and 7.3/7.6 verification.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md",
+              "openspec/changes/novamart-rag-agent/design.md"
+            ],
+            "id": "flag-in-result",
+            "label": "Cache-hit flag in tool result, one combined callback",
+            "recommended": true
+          },
+          {
+            "description": "The embedder records hit/miss in a per-turn structure that the callback reads, instead of a field in the model-visible tool result.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md",
+              "openspec/changes/novamart-rag-agent/design.md"
+            ],
+            "id": "state-side-channel",
+            "label": "Embedder records hit/miss in per-turn state",
+            "recommended": false
+          }
+        ],
+        "question": "The retrieval agent needs an after-tool callback that appends a query-embedding cost estimate unless the query embedding was a cache hit. The search_policy result in task 4.2 carries only chunks, ids, headings, paths, doc_type and scores, so the callback cannot tell a hit from a miss. A second after-tool callback on the same agent halts the turn on no_answer, and the no_answer path still embeds the query and so still costs money. How should the cache-hit signal reach the callback, and who owns the order and combination of the two callbacks on retrieval?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 156,
+            "text": "The callback adds the record only when the result is not a cache hit, so cache hits cost nothing."
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 61,
+            "text": "Implement `search_policy` returning chunks, document IDs, section headings, file paths, `doc_type` and scores, or `no_answer` below the configurable threshold"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 134,
+            "text": "An after-tool callback on those two agents recognises the status, stores the result in state, and sets the tool context's `skip_summarization`"
+          }
+        ],
+        "severity": "blocking",
+        "source": "agent",
+        "status": "open",
+        "summary": "The cost callback must skip cache hits, but search_policy's result is specified without any cache-hit indicator, and nothing owns the ordering of the two after-tool callbacks on retrieval (halt for no_answer, embedding estimate)."
+      },
+      "id": "AG-40",
+      "option": "flag-in-result",
+      "question": "The retrieval agent needs an after-tool callback that appends a query-embedding cost estimate unless the query embedding was a cache hit. The search_policy result in task 4.2 carries only chunks, ids, headings, paths, doc_type and scores, so the callback cannot tell a hit from a miss. A second after-tool callback on the same agent halts the turn on no_answer, and the no_answer path still embeds the query and so still costs money. How should the cache-hit signal reach the callback, and who owns the order and combination of the two callbacks on retrieval?",
+      "source": "defaulted",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Order after-tool callback stores success result in state",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/design.md",
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "6.4",
+          "7.4"
+        ],
+        "depends_on": [],
+        "id": "AG-41",
+        "kind": "decision",
+        "lens": "behavior",
+        "options": [
+          {
+            "description": "The order agent's after-tool callback also stores the structured eligibility result (policy id and parameters) in state on success; the orchestrator reads it from state. Extend D15 and 7.4 with a test that the id comes from the tool result, not model output.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "callback-stores-success",
+            "label": "Order after-tool callback stores success result in state",
+            "recommended": true
+          },
+          {
+            "description": "The orchestrator reads the tool response event from the order agent's emitted events.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "parse-events",
+            "label": "Orchestrator parses order agent events",
+            "recommended": false
+          }
+        ],
+        "question": "On the order route the orchestrator must append a Sources entry from the policy document id that check_return_eligibility returns. The only callback described as storing tool results in state acts on no_answer, not_found and not_determinable, so for a successful eligibility result the id is only inside the order agent's model conversation. How does the orchestrator obtain the id without trusting model-written text?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 145,
+            "text": "On the order route there are no retrieved chunks: code builds the Sources entry from the policy document id returned by `check_return_eligibility`"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 134,
+            "text": "For `no_answer` (C), `not_found` (D) and `not_determinable` (F) that extra call must not happen. An after-tool callback on those two agents recognises the status, stores the result in state"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 94,
+            "text": "the orchestrator appends the order-route Sources entry from the 6.4 loader"
+          }
+        ],
+        "severity": "blocking",
+        "source": "agent",
+        "status": "open",
+        "summary": "On a normal (successful) eligibility result nothing stores the policy document id where the orchestrator can read it; the halt callback stores only the deterministic statuses, yet D15 has the orchestrator build the order-route Sources entry from that id."
+      },
+      "id": "AG-41",
+      "option": "callback-stores-success",
+      "question": "On the order route the orchestrator must append a Sources entry from the policy document id that check_return_eligibility returns. The only callback described as storing tool results in state acts on no_answer, not_found and not_determinable, so for a successful eligibility result the id is only inside the order agent's model conversation. How does the orchestrator obtain the id without trusting model-written text?",
+      "source": "defaulted",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Reject malformed id in the order tool only",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/design.md",
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "7.6"
+        ],
+        "depends_on": [],
+        "id": "AG-43",
+        "kind": "decision",
+        "lens": "ambiguity",
+        "options": [
+          {
+            "description": "Intake never treats a malformed id as missing; it routes to order, the tool rejects it. Parity test runs the full orchestrator with a stub model for all three causes and compares whole-turn call counts.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "tool-only",
+            "label": "Reject malformed id in the order tool only",
+            "recommended": true
+          },
+          {
+            "description": "Reject malformed ids in code before intake and make the non-malformed denials match that call count by also deciding them in code (changes the specified tool-halt design).",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md",
+              "openspec/changes/novamart-rag-agent/specs/order-tools/spec.md"
+            ],
+            "id": "precheck-all",
+            "label": "Decide all denials in code before intake",
+            "recommended": false
+          }
+        ],
+        "question": "Intake can route to clarify when an order id is missing; a malformed id such as '10x2' is neither clearly missing nor valid. Where is a malformed id rejected: by intake or precheck (before the order agent, so a different call count from a nonexistent order), or only inside the order tool (so the whole turn has the same calls as a nonexistent order)? And should the 7.6 parity test run the full orchestrated turn, not only the order agent?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 125,
+            "text": "Ask exactly one question, end the turn. At most one clarification per user question (counter in state), then proceed with best effort or decline."
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 128,
+            "text": "A malformed id is rejected the same way, with no lookup."
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/specs/cost-reporting/spec.md",
+            "line": 52,
+            "text": "both replies show the same call count and the same code-produced text"
+          }
+        ],
+        "severity": "clarifying",
+        "source": "agent",
+        "status": "open",
+        "summary": "Denial parity is tested on the order agent alone, but the spec and D17 promise equal call counts on the whole turn; a malformed id could be routed by intake to the clarify route (case A) rather than reach the order tool, which would change the call count."
+      },
+      "id": "AG-43",
+      "option": "tool-only",
+      "question": "Intake can route to clarify when an order id is missing; a malformed id such as '10x2' is neither clearly missing nor valid. Where is a malformed id rejected: by intake or precheck (before the order agent, so a different call count from a nonexistent order), or only inside the order tool (so the whole turn has the same calls as a nonexistent order)? And should the 7.6 parity test run the full orchestrated turn, not only the order agent?",
+      "source": "defaulted",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Add google-adk[eval] to the dev extra",
+      "date": "2026-11-23",
+      "effects": [
+        "backend/pyproject.toml",
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "8.4",
+          "8.5"
+        ],
+        "depends_on": [],
+        "id": "AG-6",
+        "kind": "decision",
+        "lens": "grounding",
+        "options": [
+          {
+            "description": "Declare it under optional-dependencies dev (or a new eval extra), install with `pip install -e backend[dev]` in tasks 1.1 and 9.1, and verify `adk eval --help` works.",
+            "effects": [
+              "backend/pyproject.toml",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "dev-extra",
+            "label": "Add google-adk[eval] to the dev extra",
+            "recommended": true
+          },
+          {
+            "description": "Put google-adk[eval] in dependencies so a plain install works.",
+            "effects": [
+              "backend/pyproject.toml"
+            ],
+            "id": "core",
+            "label": "Add to core dependencies",
+            "recommended": false
+          },
+          {
+            "description": "Use only the custom content-check runner for trajectories too; removes the ADK eval requirement from D7 and ARCH-TEST-3.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "docs/architecture.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "no-adk-eval",
+            "label": "Drop adk eval",
+            "recommended": false
+          }
+        ],
+        "question": "How should the ADK eval dependencies be provided? `adk eval` needs the google-adk `eval` extra (heavy: pandas, nltk, aiplatform[evaluation]), which pyproject.toml does not declare, and design D7 already flags that some judge metrics may need Vertex.",
+        "quotes": [
+          {
+            "file": "backend/pyproject.toml",
+            "line": 11,
+            "text": "\"google-adk\","
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 106,
+            "text": "Build the runner (ADK eval for tool trajectories plus custom content checks, call count and cost per question) and run both sets"
+          },
+          {
+            "file": "docs/architecture.md",
+            "line": 56,
+            "text": "every spec scenario about tool use, refusal, access control or grounding has at least one ADK eval case under `backend/evals/` (run with `adk eval`)"
+          }
+        ],
+        "severity": "blocking",
+        "source": "agent",
+        "status": "open",
+        "summary": "Dependencies needed by the tasks are not declared. Evals use `adk eval` (tasks 8.4 and 8.5, ARCH-TEST-3), but pyproject installs plain google-adk. The installed google-adk 2.15.0 METADATA lists eval support (pandas, nltk, google-cloud-aiplatform[evaluation]) only under the `eval` extra, and the venv has no pandas. `pip install -e backend` per task 1.1 therefore does not yield a working `adk eval`."
+      },
+      "id": "AG-6",
+      "option": "dev-extra",
+      "question": "How should the ADK eval dependencies be provided? `adk eval` needs the google-adk `eval` extra (heavy: pandas, nltk, aiplatform[evaluation]), which pyproject.toml does not declare, and design D7 already flags that some judge metrics may need Vertex.",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Gate live-call verifications on the owner",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "1.2",
+          "1.3",
+          "1.4"
+        ],
+        "depends_on": [
+          "AG-1"
+        ],
+        "id": "AG-7",
+        "kind": "decision",
+        "lens": "contradiction",
+        "options": [
+          {
+            "description": "Mark the live-call verifications in 1.2, 1.3, 1.4 and chunk 7 as authored, not run, until the owner supplies the key; the model ID default stays provisional until then.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "gate",
+            "label": "Gate live-call verifications on the owner",
+            "recommended": true
+          },
+          {
+            "description": "State in the architecture and standards that the gate covers evals only, so setup verification calls are allowed once the key is in .env.",
+            "effects": [
+              "docs/architecture.md",
+              "docs/engineering-standards.md"
+            ],
+            "id": "exempt",
+            "label": "Exempt setup and agent runs",
+            "recommended": false
+          }
+        ],
+        "question": "Tasks 1.2, 1.3 and 1.4 verify by making live Gemini calls, and 7.x verify by `adk run`. ARCH-TEST-3 says agents never run a command that calls the model until the owner supplies the key and says to run. Should these setup and agent verifications be treated as owner-gated?",
+        "quotes": [
+          {
+            "file": "backend/src/novamart_agent/config.py",
+            "line": 6,
+            "text": "# Provisional default from design D6 candidates; task 1.2 confirms or replaces it."
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 25,
+            "text": "verify a one-line `google-genai` generate call and one embedding call succeed with the key"
+          },
+          {
+            "file": "docs/architecture.md",
+            "line": 56,
+            "text": "Agents author the evalsets, `test_config.json` and the content-check runner, but never run an eval (or any command that calls the model) until the owner has supplied the key and says to run."
+          }
+        ],
+        "severity": "clarifying",
+        "source": "agent",
+        "status": "open",
+        "summary": "Setup tasks 1.2 to 1.4 call the live model with the key, but ARCH-TEST-3 forbids agents from running any command that calls the model until the owner supplies the key and says to run. The model ID is also only provisional: config.py hardcodes gemini-3.6-flash while D6 lists three unverified candidates."
+      },
+      "id": "AG-7",
+      "option": "gate",
+      "question": "Tasks 1.2, 1.3 and 1.4 verify by making live Gemini calls, and 7.x verify by `adk run`. ARCH-TEST-3 says agents never run a command that calls the model until the owner supplies the key and says to run. Should these setup and agent verifications be treated as owner-gated?",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "if there is nothing then tell the user nothing was found and to ask a new question",
+      "date": "2026-11-23",
+      "effects": [],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "6.3",
+          "7.3",
+          "8.2"
+        ],
+        "depends_on": [],
+        "id": "AG-8",
+        "kind": "decision",
+        "lens": "contradiction",
+        "options": [
+          {
+            "description": "Keep D11. Reword the case C row to 'the gate returns no_answer'. A rewrite only happens when chunks exist but coverage is weak.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md"
+            ],
+            "id": "immediate",
+            "label": "Decline at once",
+            "recommended": true
+          },
+          {
+            "description": "Keep the D13 wording. Change D11 so a first-pass no_answer gets one rewritten query, and no_answer after that gives case C. Costs an extra model call on every refusal, and the rewrite needs a source because the validator has no chunks to judge.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "rewrite-first",
+            "label": "One rewrite before declining",
+            "recommended": false
+          }
+        ],
+        "question": "When the first search_policy call returns no_answer (below the cosine threshold or audience-filtered), should the pipeline decline immediately with case C, or run one query rewrite and search again before declining? The design says both.",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 127,
+            "text": "| C | No evidence: the gate returns `no_answer` after the allowed rewrite | loop |"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 115,
+            "text": "the loop exits at once with case C (D13); the validator can never turn a deterministic refusal into an answer."
+          }
+        ],
+        "severity": "blocking",
+        "source": "agent",
+        "status": "open",
+        "summary": "Refusal case C is defined as 'after the allowed rewrite', but D11 says a no_answer exits the loop at once, so no rewrite can precede case C."
+      },
+      "id": "AG-8",
+      "question": "When the first search_policy call returns no_answer (below the cosine threshold or audience-filtered), should the pipeline decline immediately with case C, or run one query rewrite and search again before declining? The design says both.",
+      "source": "custom",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Uniform not-found",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/specs/order-tools/spec.md",
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "3.2",
+          "5.1",
+          "8.1"
+        ],
+        "depends_on": [],
+        "id": "AG-9",
+        "kind": "decision",
+        "lens": "contradiction",
+        "options": [
+          {
+            "description": "Follow D13 and ARCH-ERR-1. Change the order-tools 'Malformed identifier' scenario to the uniform not-found text, still with no lookup. Add this scenario to task 8.1.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/specs/order-tools/spec.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "uniform",
+            "label": "Uniform not-found",
+            "recommended": true
+          },
+          {
+            "description": "Keep the spec. Treat a malformed id as case A at intake, before any tool call. D13 case D and ARCH-ERR-1 then need changing, and the architecture spec is a protected file, so this needs a proposal.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "docs/architecture.md"
+            ],
+            "id": "ask",
+            "label": "Ask for a valid number",
+            "recommended": false
+          }
+        ],
+        "question": "What should the user see when they give a malformed order id (for example '10x2')? The order-tools spec asks them for a valid number, while design D13 and ARCH-ERR-1 return the uniform not-found text with no follow-up.",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/specs/order-tools/spec.md",
+            "line": 23,
+            "text": "- **THEN** the assistant asks for a valid order number and no order lookup occurs"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 128,
+            "text": "The uniform not-found text, identical for every cause. No follow-up questions about the order"
+          },
+          {
+            "file": "openspec/changes/novamart-rag-agent/tasks.md",
+            "line": 104,
+            "text": "Update the spec scenarios in `specs/` for the clarification turn, the refusal split (C against E), the confidence band and the order shortcut"
+          }
+        ],
+        "severity": "blocking",
+        "source": "agent",
+        "status": "open",
+        "summary": "The order-tools spec says a malformed order id makes the assistant ask for a valid number. Design D13 case D says a malformed id gets the uniform not-found text with no follow-up question. Task 8.1 does not list this scenario for update."
+      },
+      "id": "AG-9",
+      "option": "uniform",
+      "question": "What should the user see when they give a malformed order id (for example '10x2')? The order-tools spec asks them for a valid number, while design D13 and ARCH-ERR-1 return the uniform not-found text with no follow-up.",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Already covered",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "id": "COV-1",
+        "kind": "decision",
+        "lens": "coverage",
+        "options": [
+          {
+            "description": "Add a task to openspec/changes/novamart-rag-agent/tasks.md that implements and verifies the requirement.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "add-task",
+            "label": "Add a task",
+            "recommended": false
+          },
+          {
+            "description": "Name the task that covers it and reword that task so the link is explicit.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "already-covered",
+            "label": "Already covered",
+            "recommended": true
+          },
+          {
+            "description": "Remove or narrow the requirement because it is out of scope for this change (narrows the specification).",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/specs/access-control/spec.md"
+            ],
+            "id": "drop-requirement",
+            "label": "Drop the requirement",
+            "recommended": false
+          }
+        ],
+        "question": "In change 'novamart-rag-agent', requirement 'Order access is scoped to store and role' has no task that names it. What should happen?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/specs/access-control/spec.md",
+            "line": 18,
+            "text": "### Requirement: Order access is scoped to store and role"
+          }
+        ],
+        "severity": "clarifying",
+        "source": "script",
+        "status": "open",
+        "summary": "Requirement 'Order access is scoped to store and role' is not named by any task (a task shares some wording; make the link explicit)."
+      },
+      "id": "COV-1",
+      "option": "already-covered",
+      "question": "In change 'novamart-rag-agent', requirement 'Order access is scoped to store and role' has no task that names it. What should happen?",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Already covered",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "id": "COV-2",
+        "kind": "decision",
+        "lens": "coverage",
+        "options": [
+          {
+            "description": "Add a task to openspec/changes/novamart-rag-agent/tasks.md that implements and verifies the requirement.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "add-task",
+            "label": "Add a task",
+            "recommended": false
+          },
+          {
+            "description": "Name the task that covers it and reword that task so the link is explicit.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "already-covered",
+            "label": "Already covered",
+            "recommended": true
+          },
+          {
+            "description": "Remove or narrow the requirement because it is out of scope for this change (narrows the specification).",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/specs/access-control/spec.md"
+            ],
+            "id": "drop-requirement",
+            "label": "Drop the requirement",
+            "recommended": false
+          }
+        ],
+        "question": "In change 'novamart-rag-agent', requirement 'Denials do not reveal existence' has no task that names it. What should happen?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/specs/access-control/spec.md",
+            "line": 29,
+            "text": "### Requirement: Denials do not reveal existence"
+          }
+        ],
+        "severity": "clarifying",
+        "source": "script",
+        "status": "open",
+        "summary": "Requirement 'Denials do not reveal existence' is not named by any task (a task shares some wording; make the link explicit)."
+      },
+      "id": "COV-2",
+      "option": "already-covered",
+      "question": "In change 'novamart-rag-agent', requirement 'Denials do not reveal existence' has no task that names it. What should happen?",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Already covered",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "id": "COV-3",
+        "kind": "decision",
+        "lens": "coverage",
+        "options": [
+          {
+            "description": "Add a task to openspec/changes/novamart-rag-agent/tasks.md that implements and verifies the requirement.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "add-task",
+            "label": "Add a task",
+            "recommended": false
+          },
+          {
+            "description": "Name the task that covers it and reword that task so the link is explicit.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "already-covered",
+            "label": "Already covered",
+            "recommended": true
+          },
+          {
+            "description": "Remove or narrow the requirement because it is out of scope for this change (narrows the specification).",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/specs/access-control/spec.md"
+            ],
+            "id": "drop-requirement",
+            "label": "Drop the requirement",
+            "recommended": false
+          }
+        ],
+        "question": "In change 'novamart-rag-agent', requirement 'Access-related events are audit-logged without PII' has no task that names it. What should happen?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/specs/access-control/spec.md",
+            "line": 36,
+            "text": "### Requirement: Access-related events are audit-logged without PII"
+          }
+        ],
+        "severity": "clarifying",
+        "source": "script",
+        "status": "open",
+        "summary": "Requirement 'Access-related events are audit-logged without PII' is not named by any task (a task shares some wording; make the link explicit)."
+      },
+      "id": "COV-3",
+      "option": "already-covered",
+      "question": "In change 'novamart-rag-agent', requirement 'Access-related events are audit-logged without PII' has no task that names it. What should happen?",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Already covered",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "id": "COV-4",
+        "kind": "decision",
+        "lens": "coverage",
+        "options": [
+          {
+            "description": "Add a task to openspec/changes/novamart-rag-agent/tasks.md that implements and verifies the requirement.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "add-task",
+            "label": "Add a task",
+            "recommended": false
+          },
+          {
+            "description": "Name the task that covers it and reword that task so the link is explicit.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "already-covered",
+            "label": "Already covered",
+            "recommended": true
+          },
+          {
+            "description": "Remove or narrow the requirement because it is out of scope for this change (narrows the specification).",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/specs/agent-evaluation/spec.md"
+            ],
+            "id": "drop-requirement",
+            "label": "Drop the requirement",
+            "recommended": false
+          }
+        ],
+        "question": "In change 'novamart-rag-agent', requirement 'Results are reported honestly' has no task that names it. What should happen?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/specs/agent-evaluation/spec.md",
+            "line": 43,
+            "text": "### Requirement: Results are reported honestly"
+          }
+        ],
+        "severity": "clarifying",
+        "source": "script",
+        "status": "open",
+        "summary": "Requirement 'Results are reported honestly' is not named by any task (a task shares some wording; make the link explicit)."
+      },
+      "id": "COV-4",
+      "option": "already-covered",
+      "question": "In change 'novamart-rag-agent', requirement 'Results are reported honestly' has no task that names it. What should happen?",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Already covered",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "id": "COV-5",
+        "kind": "decision",
+        "lens": "coverage",
+        "options": [
+          {
+            "description": "Add a task to openspec/changes/novamart-rag-agent/tasks.md that implements and verifies the requirement.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "add-task",
+            "label": "Add a task",
+            "recommended": false
+          },
+          {
+            "description": "Name the task that covers it and reword that task so the link is explicit.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "already-covered",
+            "label": "Already covered",
+            "recommended": true
+          },
+          {
+            "description": "Remove or narrow the requirement because it is out of scope for this change (narrows the specification).",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/specs/cost-reporting/spec.md"
+            ],
+            "id": "drop-requirement",
+            "label": "Drop the requirement",
+            "recommended": false
+          }
+        ],
+        "question": "In change 'novamart-rag-agent', requirement 'Cost does not reveal why an order was denied' has no task that names it. What should happen?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/specs/cost-reporting/spec.md",
+            "line": 47,
+            "text": "### Requirement: Cost does not reveal why an order was denied"
+          }
+        ],
+        "severity": "clarifying",
+        "source": "script",
+        "status": "open",
+        "summary": "Requirement 'Cost does not reveal why an order was denied' is not named by any task (a task shares some wording; make the link explicit)."
+      },
+      "id": "COV-5",
+      "option": "already-covered",
+      "question": "In change 'novamart-rag-agent', requirement 'Cost does not reveal why an order was denied' has no task that names it. What should happen?",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Already covered",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "id": "COV-6",
+        "kind": "decision",
+        "lens": "coverage",
+        "options": [
+          {
+            "description": "Add a task to openspec/changes/novamart-rag-agent/tasks.md that implements and verifies the requirement.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "add-task",
+            "label": "Add a task",
+            "recommended": false
+          },
+          {
+            "description": "Name the task that covers it and reword that task so the link is explicit.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "already-covered",
+            "label": "Already covered",
+            "recommended": true
+          },
+          {
+            "description": "Remove or narrow the requirement because it is out of scope for this change (narrows the specification).",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/specs/production-note/spec.md"
+            ],
+            "id": "drop-requirement",
+            "label": "Drop the requirement",
+            "recommended": false
+          }
+        ],
+        "question": "In change 'novamart-rag-agent', requirement 'Identity propagation is addressed' has no task that names it. What should happen?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/specs/production-note/spec.md",
+            "line": 25,
+            "text": "### Requirement: Identity propagation is addressed"
+          }
+        ],
+        "severity": "clarifying",
+        "source": "script",
+        "status": "open",
+        "summary": "Requirement 'Identity propagation is addressed' is not named by any task (a task shares some wording; make the link explicit)."
+      },
+      "id": "COV-6",
+      "option": "already-covered",
+      "question": "In change 'novamart-rag-agent', requirement 'Identity propagation is addressed' has no task that names it. What should happen?",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Already covered",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "id": "COV-7",
+        "kind": "decision",
+        "lens": "coverage",
+        "options": [
+          {
+            "description": "Add a task to openspec/changes/novamart-rag-agent/tasks.md that implements and verifies the requirement.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "add-task",
+            "label": "Add a task",
+            "recommended": false
+          },
+          {
+            "description": "Name the task that covers it and reword that task so the link is explicit.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "already-covered",
+            "label": "Already covered",
+            "recommended": true
+          },
+          {
+            "description": "Remove or narrow the requirement because it is out of scope for this change (narrows the specification).",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/specs/production-note/spec.md"
+            ],
+            "id": "drop-requirement",
+            "label": "Drop the requirement",
+            "recommended": false
+          }
+        ],
+        "question": "In change 'novamart-rag-agent', requirement 'Claims about products are verified or flagged' has no task that names it. What should happen?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/specs/production-note/spec.md",
+            "line": 32,
+            "text": "### Requirement: Claims about products are verified or flagged"
+          }
+        ],
+        "severity": "clarifying",
+        "source": "script",
+        "status": "open",
+        "summary": "Requirement 'Claims about products are verified or flagged' is not named by any task (a task shares some wording; make the link explicit)."
+      },
+      "id": "COV-7",
+      "option": "already-covered",
+      "question": "In change 'novamart-rag-agent', requirement 'Claims about products are verified or flagged' has no task that names it. What should happen?",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Already covered",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "id": "COV-8",
+        "kind": "decision",
+        "lens": "coverage",
+        "options": [
+          {
+            "description": "Add a task to openspec/changes/novamart-rag-agent/tasks.md that implements and verifies the requirement.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "add-task",
+            "label": "Add a task",
+            "recommended": false
+          },
+          {
+            "description": "Name the task that covers it and reword that task so the link is explicit.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "already-covered",
+            "label": "Already covered",
+            "recommended": true
+          },
+          {
+            "description": "Remove or narrow the requirement because it is out of scope for this change (narrows the specification).",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/specs/production-note/spec.md"
+            ],
+            "id": "drop-requirement",
+            "label": "Drop the requirement",
+            "recommended": false
+          }
+        ],
+        "question": "In change 'novamart-rag-agent', requirement 'Prototype limits are disclosed' has no task that names it. What should happen?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/specs/production-note/spec.md",
+            "line": 39,
+            "text": "### Requirement: Prototype limits are disclosed"
+          }
+        ],
+        "severity": "clarifying",
+        "source": "script",
+        "status": "open",
+        "summary": "Requirement 'Prototype limits are disclosed' is not named by any task (a task shares some wording; make the link explicit)."
+      },
+      "id": "COV-8",
+      "option": "already-covered",
+      "question": "In change 'novamart-rag-agent', requirement 'Prototype limits are disclosed' has no task that names it. What should happen?",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Keep it open",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/design.md",
+        "openspec/changes/novamart-rag-agent/tasks.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "id": "OQ-1",
+        "kind": "decision",
+        "lens": "ambiguity",
+        "options": [
+          {
+            "description": "Choose an answer now and record it in the design, so no task waits on it.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md"
+            ],
+            "id": "decide-now",
+            "label": "Decide it now",
+            "recommended": true
+          },
+          {
+            "description": "Leave it open and mark the dependent tasks as not startable until it is answered.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "defer",
+            "label": "Keep it open",
+            "recommended": false
+          }
+        ],
+        "question": "Design of 'novamart-rag-agent' leaves this open: How does Gemini Enterprise pass end-user identity to an A2A-registered agent? A production spike item for the note, not a prototype task. How should it be settled?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 184,
+            "text": "- How does Gemini Enterprise pass end-user identity to an A2A-registered agent? A production spike item for the note, not a prototype task."
+          }
+        ],
+        "severity": "clarifying",
+        "source": "script",
+        "status": "open",
+        "summary": "Open question left unresolved: How does Gemini Enterprise pass end-user identity to an A2A-registered agent? A production spike item for the note, not a prototype task."
+      },
+      "id": "OQ-1",
+      "option": "defer",
+      "question": "Design of 'novamart-rag-agent' leaves this open: How does Gemini Enterprise pass end-user identity to an A2A-registered agent? A production spike item for the note, not a prototype task. How should it be settled?",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Order path only (prototype scope): combined questions are served from the order path only; the policy part is a documented limitation.",
+      "date": "2026-11-23",
+      "effects": [],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "7.4",
+          "8.2"
+        ],
+        "id": "OQ-2",
+        "kind": "decision",
+        "lens": "ambiguity",
+        "options": [
+          {
+            "description": "Choose an answer now and record it in the design, so no task waits on it.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md"
+            ],
+            "id": "decide-now",
+            "label": "Decide it now",
+            "recommended": true
+          },
+          {
+            "description": "Leave it open and mark the dependent tasks as not startable until it is answered.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "defer",
+            "label": "Keep it open",
+            "recommended": false
+          }
+        ],
+        "question": "Design of 'novamart-rag-agent' leaves this open: Combined questions (\"can I return order 1042, and what is the policy on gift cards?\"): this revision serves them from the order path only. Should the orchestrator instead run the order path and then t How should it be settled?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 186,
+            "text": "- Combined questions (\"can I return order 1042, and what is the policy on gift cards?\"): this revision serves them from the order path only. Should the orchestrator instead run the order path and then the knowledge path and merge? Decide after the first eval run shows how common they are."
+          }
+        ],
+        "severity": "blocking",
+        "source": "script",
+        "status": "open",
+        "summary": "Open question left unresolved: Combined questions. Tasks 7.4, 8.2 depend on it."
+      },
+      "id": "OQ-2",
+      "question": "Design of 'novamart-rag-agent' leaves this open: Combined questions (\"can I return order 1042, and what is the policy on gift cards?\"): this revision serves them from the order path only. Should the orchestrator instead run the order path and then t How should it be settled?",
+      "source": "custom",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Chosen at build, tuned in 8.4: values live in config, set at build and tuned in task 8.4; no task waits.",
+      "date": "2026-11-23",
+      "effects": [],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "6.1"
+        ],
+        "id": "OQ-3",
+        "kind": "decision",
+        "lens": "ambiguity",
+        "options": [
+          {
+            "description": "Choose an answer now and record it in the design, so no task waits on it.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md"
+            ],
+            "id": "decide-now",
+            "label": "Decide it now",
+            "recommended": true
+          },
+          {
+            "description": "Leave it open and mark the dependent tasks as not startable until it is answered.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "defer",
+            "label": "Keep it open",
+            "recommended": false
+          }
+        ],
+        "question": "Design of 'novamart-rag-agent' leaves this open: Defaults for the confidence weights, band thresholds, the loop-exit threshold T and the rewrite length cap: chosen at build, tuned in task 8.4. How should it be settled?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 187,
+            "text": "- Defaults for the confidence weights, band thresholds, the loop-exit threshold T and the rewrite length cap: chosen at build, tuned in task 8.4."
+          }
+        ],
+        "severity": "blocking",
+        "source": "script",
+        "status": "open",
+        "summary": "Open question left unresolved: Defaults for the confidence weights, band thresholds, the loop-exit threshold T and the rewrite length cap. Tasks 6.1 depend on it."
+      },
+      "id": "OQ-3",
+      "question": "Design of 'novamart-rag-agent' leaves this open: Defaults for the confidence weights, band thresholds, the loop-exit threshold T and the rewrite length cap: chosen at build, tuned in task 8.4. How should it be settled?",
+      "source": "custom",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Decide it now",
+      "date": "2026-11-23",
+      "effects": [
+        "openspec/changes/novamart-rag-agent/design.md"
+      ],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "8.1"
+        ],
+        "id": "OQ-4",
+        "kind": "decision",
+        "lens": "ambiguity",
+        "options": [
+          {
+            "description": "Choose an answer now and record it in the design, so no task waits on it.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md"
+            ],
+            "id": "decide-now",
+            "label": "Decide it now",
+            "recommended": true
+          },
+          {
+            "description": "Leave it open and mark the dependent tasks as not startable until it is answered.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "defer",
+            "label": "Keep it open",
+            "recommended": false
+          }
+        ],
+        "question": "Design of 'novamart-rag-agent' leaves this open: Spec scenarios in `specs/` need updating for the clarification turn, the refusal split (C against E), the confidence band and the order shortcut. Not done in this revision. How should it be settled?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 188,
+            "text": "- Spec scenarios in `specs/` need updating for the clarification turn, the refusal split (C against E), the confidence band and the order shortcut. Not done in this revision."
+          }
+        ],
+        "severity": "blocking",
+        "source": "script",
+        "status": "open",
+        "summary": "Open question left unresolved: Spec scenarios in `specs/` need updating for the clarification turn, the refusal split. Tasks 8.1 depend on it."
+      },
+      "id": "OQ-4",
+      "option": "decide-now",
+      "question": "Design of 'novamart-rag-agent' leaves this open: Spec scenarios in `specs/` need updating for the clarification turn, the refusal split (C against E), the confidence band and the order shortcut. Not done in this revision. How should it be settled?",
+      "source": "decided",
+      "state": "applied",
+      "who": "Calvin"
+    },
+    {
+      "affects": [
+        "novamart-rag-agent"
+      ],
+      "choice": "Filled at build from the published pricing page and re-checked in 9.2; no task waits.",
+      "date": "2026-11-23",
+      "effects": [],
+      "finding": {
+        "affected": [
+          "novamart-rag-agent"
+        ],
+        "blocks_tasks": [
+          "6.5",
+          "7.6",
+          "8.4",
+          "8.6",
+          "9.2"
+        ],
+        "id": "OQ-5",
+        "kind": "decision",
+        "lens": "ambiguity",
+        "options": [
+          {
+            "description": "Choose an answer now and record it in the design, so no task waits on it.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md"
+            ],
+            "id": "decide-now",
+            "label": "Decide it now",
+            "recommended": true
+          },
+          {
+            "description": "Leave it open and mark the dependent tasks as not startable until it is answered.",
+            "effects": [
+              "openspec/changes/novamart-rag-agent/design.md",
+              "openspec/changes/novamart-rag-agent/tasks.md"
+            ],
+            "id": "defer",
+            "label": "Keep it open",
+            "recommended": false
+          }
+        ],
+        "question": "Design of 'novamart-rag-agent' leaves this open: Cost: the price table defaults (chat and embedding models) are filled at build from the published pricing page and re-checked in 9.2. How should it be settled?",
+        "quotes": [
+          {
+            "file": "openspec/changes/novamart-rag-agent/design.md",
+            "line": 190,
+            "text": "- Cost: the price table defaults (chat and embedding models) are filled at build from the published pricing page and re-checked in 9.2."
+          }
+        ],
+        "severity": "blocking",
+        "source": "script",
+        "status": "open",
+        "summary": "Open question left unresolved: Cost. Tasks 6.5, 7.6, 8.4, 8.6, 9.2 depend on it."
+      },
+      "id": "OQ-5",
+      "question": "Design of 'novamart-rag-agent' leaves this open: Cost: the price table defaults (chat and embedding models) are filled at build from the published pricing page and re-checked in 9.2. How should it be settled?",
+      "source": "custom",
+      "state": "applied",
+      "who": "Calvin"
+    }
+  ]
+}

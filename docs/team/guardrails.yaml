@@ -74,7 +74,7 @@ agents:
 
   backend-dev:
     kind: builder
-    may_write: ["{server|source}", "{migrations}", "{tests}", "{deps}"]
+    may_write: ["{server|source}", "{migrations}", "{tests}", "{deps}", "README.md", "backend/README.md", "docs/production_note.md"]
     verdicts: [DONE, BLOCKED]
     sections: [Tasks, Evidence, Standards self-check, Open items]
     stop_when:
