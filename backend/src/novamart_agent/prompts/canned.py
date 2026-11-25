@@ -68,6 +68,11 @@ def no_answer_reply(contact: str, closest_titles: Sequence[str]) -> str:
     return text
 
 
+def weak_coverage_contact(contact: str) -> str:
+    """Case E: appended by code after Sources and the band, from the document lookup."""
+    return f"If you need more help, please contact {contact}."
+
+
 def not_determinable_reply(contact: str) -> str:
     """Case F: eligibility cannot be determined; give the contact; nothing else."""
     return f"I cannot determine return eligibility for this order. Please contact {contact}."

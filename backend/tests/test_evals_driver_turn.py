@@ -63,7 +63,7 @@ def test_outcome_c_no_evidence_passes_its_shipped_case(data_dir: Path, tmp_path:
         intake=scripted("intake", say_json(POLICY)),
         retrieval=scripted("retrieval", call("search_policy", query=WEAK)),
     )
-    case = CASES["question-the-documents-are-silent-on-bulk-orders"]
+    case = CASES["question-below-the-cosine-threshold-dress-code"]
     turns = run_turns(build_world(model, data_dir, tmp_path), *case.turns)
     assert outcome_of(turns[0]) == "C"
     assert grade(case, turns, data_dir) == []

@@ -6,6 +6,13 @@ From the repo root, with `backend/.env` filled in:
     python backend/evals/run_evals.py                      # both sets, plus the ADK step
     python backend/evals/run_evals.py --set security --skip-adk
     python backend/evals/run_evals.py --only unknown-order-not-found
+    python backend/evals/run_evals.py --dry-run            # key-free: cases and estimated calls
+    python backend/evals/run_evals.py --max-cases 5 --skip-adk   # cap the spend of one run
+
+Spend guards: `--dry-run` makes no model call; `--max-cases N` runs only the first N selected
+cases; a run stops after 3 cases in a row that raise (usually a quota error), so an exhausted
+key is not hammered. `adk eval` re-runs every case with the model, so use `--skip-adk` when
+the daily quota is tight.
 
 Outputs, in `backend/evals/results/`: per set `<set>-<stamp>.md` and `.json` (per-case results,
 overall pass rate, model calls and cost per question) and, unless `--skip-adk`, one
@@ -45,24 +52,34 @@ BACKEND_DIR = EVALS_DIR.parent
 AGENT_DIR = BACKEND_DIR / "src" / "novamart_agent"
 RESULTS_DIR = EVALS_DIR / "results"
 NO_KEY = 2
+MAX_CONSECUTIVE_ERRORS = 3
+ESTIMATED_CALLS_PER_CASE = 3.4  # mean model calls per question, RESULTS.md (lite model)
 
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run the NovaMart evals (live, needs a key).")
     parser.add_argument("--set", choices=["quality", "security"], default=None)
     parser.add_argument("--only", action="append", default=[], help="a case id (repeatable)")
+    parser.add_argument("--dry-run", action="store_true", help="list cases and estimate; no calls")
+    parser.add_argument("--max-cases", type=int, default=None, help="run at most N cases")
     parser.add_argument("--skip-adk", action="store_true", help="skip the `adk eval` step")
     return parser.parse_args(argv)
 
 
 async def run_all(cases: tuple[Case, ...], runtime: Runtime) -> list[CaseResult]:
     results: list[CaseResult] = []
+    errors_in_a_row = 0
     for case in cases:
         try:
             results.append(grade_case(case, await run_case(case, runtime)))
+            errors_in_a_row = 0
         except Exception as exc:  # noqa: BLE001 - one broken case must not hide the others
             results.append(failed_run(case, type(exc).__name__))
+            errors_in_a_row += 1
         print(f"{'PASS' if results[-1].passed else 'FAIL'} {case.case_id}", flush=True)
+        if errors_in_a_row >= MAX_CONSECUTIVE_ERRORS:
+            print(f"Stopping: {errors_in_a_row} cases in a row raised (quota?). Rest not run.")
+            break
     return results
 
 
@@ -87,6 +104,13 @@ def report(results: list[CaseResult], stamp: str) -> None:
 
 async def main(argv: list[str]) -> int:
     args = parse_args(argv)
+    cases = select_cases(load_all_cases(EVALS_DIR / "cases"), args.set, tuple(args.only))
+    if args.max_cases is not None:
+        cases = cases[: max(args.max_cases, 0)]
+    if args.dry_run:
+        print(f"{len(cases)} cases, about {len(cases) * ESTIMATED_CALLS_PER_CASE:.0f} model calls")
+        print("`adk eval` (unless --skip-adk) adds roughly the same again. Nothing was run.")
+        return 0
     # standards-exception(CONV-1): owner-run eval scripts load backend/.env before config
     load_dotenv(BACKEND_DIR / ".env")
     if not os.environ.get("GOOGLE_API_KEY"):
@@ -99,7 +123,6 @@ async def main(argv: list[str]) -> int:
         RESULTS_DIR / "scratch",
         load_seeded_values(settings.data_dir / "orders.json"),
     )
-    cases = select_cases(load_all_cases(EVALS_DIR / "cases"), args.set, tuple(args.only))
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     results = await run_all(cases, runtime)
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)

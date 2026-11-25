@@ -35,6 +35,7 @@ from novamart_agent.prompts import (
     no_answer_reply,
     not_determinable_reply,
     order_route_notes,
+    weak_coverage_contact,
 )
 
 
@@ -68,7 +69,8 @@ def _knowledge_parts(facts: ReplyFacts, env: ReplyEnv) -> ReplyParts:
         return ReplyParts(FAILURE_REPLY)
     notes = (LOW_CONFIDENCE_NOTE,) if best.band is ConfidenceBand.LOW else ()
     sources = policy_sources(chunks, env.catalog, env.docs_path_label)
-    return ReplyParts(body, sources, best.band, notes)
+    footer = (weak_coverage_contact(env.contact),) if best.band is ConfidenceBand.LOW else ()
+    return ReplyParts(body, sources, best.band, notes, footer=footer)
 
 
 def _order_parts(facts: ReplyFacts, env: ReplyEnv) -> ReplyParts:
@@ -109,5 +111,5 @@ def build_reply(facts: ReplyFacts, env: ReplyEnv, cost_line: str | None) -> str:
     """The text the user sees. `cost_line` is None when the display flag is off."""
     parts = _parts(facts, env)
     return assemble_reply(
-        ReplyParts(parts.body, parts.sources, parts.band, parts.notes, cost_line)
+        ReplyParts(parts.body, parts.sources, parts.band, parts.notes, cost_line, parts.footer)
     )

@@ -73,6 +73,7 @@ The system SHALL separate two cases. When retrieval finds no sufficiently releva
 #### Scenario: Weak coverage answers with Low band
 - **WHEN** documents are retrieved but a required part of the question is not covered by them
 - **THEN** the assistant answers the supported part, states which part is not covered, ends with the Low band and Sources, and does not use the no-evidence refusal
+- **AND** the reply also gives the escalation contact, read from the store operations document and appended by code
 
 ### Requirement: Confidence is shown as a band written by code
 A reply built from retrieved documents SHALL carry a Sources list followed by a line `Confidence: <band>` where the band is High, Medium or Low, computed in code from rubric coverage, the retrieval score and the validator's confidence. The band SHALL NOT be written by a model and SHALL NOT be shown as a number. When any required part of the question is not covered, the band SHALL NOT exceed Low. Replies that are not built from retrieved documents (clarification, decline, no-evidence refusal, order records) carry no band.

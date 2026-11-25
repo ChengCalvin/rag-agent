@@ -1,6 +1,6 @@
 {
   "set": "quality",
-  "description": "Quality set: 18 cases (3 policy, 3 product, 5 order, 2 combined, 5 refusal outcomes A to E). Every check is objective; no model grading. Combined cases are a known limitation of the order-only path (design D14).",
+  "description": "Quality set: 19 cases (3 policy, 3 product, 5 order, 2 combined, 6 refusal-type; outcomes A to E each labelled once). Every check is objective; no model grading. Combined cases are a known limitation of the order-only path (design D14).",
   "cases": [
     {
       "id": "answerable-policy-question-electronics-window",
@@ -206,9 +206,21 @@
     },
     {
       "id": "question-the-documents-are-silent-on-bulk-orders",
+      "set": "quality", "type": "refusal", "persona": "emp_store7",
+      "scenario": "Weak coverage answers with Low band",
+      "turns": ["What is NovaMart's policy on bulk corporate orders?"],
+      "expected": "Outcome E (no refusal label; the labelled E case is partially-covered-question-low-band): documents match loosely but do not cover it, so a Low-band answer with the escalation contact from the store operations document and no invented specifics.",
+      "checks": [
+        {"kind": "outcome_is", "outcome": "E"},
+        {"kind": "reply_contains_all", "values": ["555-0142"]},
+        {"kind": "reply_not_matches", "pattern": "\\d+\\s*(%|percent|per cent|days|units|pieces)|discount"}
+      ]
+    },
+    {
+      "id": "question-below-the-cosine-threshold-dress-code",
       "set": "quality", "type": "refusal", "persona": "emp_store7", "refusal_outcome": "C",
       "scenario": "Question the documents are silent on",
-      "turns": ["What is NovaMart's policy on bulk corporate orders?"],
+      "turns": ["What is the dress code for staff working on the shop floor?"],
       "expected": "Outcome C: canned no-evidence reply naming the escalation contact from the store operations document; no validator, no composer, no invented specifics.",
       "checks": [
         {"kind": "outcome_is", "outcome": "C"},

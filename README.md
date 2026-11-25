@@ -118,6 +118,8 @@ python backend/evals/run_evals.py --set security --skip-adk
 python backend/evals/run_evals.py --only <case-id>
 ```
 
+The free key has a daily request cap (the lite model: 500), and a full run with `adk eval` can use most of it. To spend less: `--dry-run` prints the case count and an estimated call count and makes no call; `--max-cases N` runs only the first N cases; add `--skip-adk` to skip the trajectory step (it re-runs every case); the runner stops after 3 cases in a row raise errors, so an exhausted quota is not hammered. A quality or security run is roughly 3 model calls per case.
+
 Results are written to `backend/evals/results/` (git-ignored). Cases are in `backend/evals/cases/`.
 
 ## Layout

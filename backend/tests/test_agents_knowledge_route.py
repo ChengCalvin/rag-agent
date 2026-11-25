@@ -9,7 +9,13 @@ from pathlib import Path
 
 from novamart_agent.models import STATE_PRINCIPAL
 from novamart_agent.pipeline import STATE_USAGE
-from novamart_agent.prompts import FAILURE_REPLY, LOW_CONFIDENCE_NOTE, clarification_reply
+from novamart_agent.prompts import (
+    FAILURE_REPLY,
+    LOW_CONFIDENCE_NOTE,
+    clarification_reply,
+    weak_coverage_contact,
+)
+from novamart_agent.rag import escalation_contact, load_documents
 from stub_llm import call, say, say_json, scripted
 from world import Scripts, World, build_world, rubric_json, unused, verdict_json
 
@@ -91,6 +97,22 @@ def test_answer_with_doubtful_coverage_is_case_e_low_band_caveat_and_sources(
     assert "Confidence: Low" in turn.reply
     assert LOW_CONFIDENCE_NOTE in turn.reply
     assert "Sources:" in turn.reply
+    contact = escalation_contact(load_documents(data_dir / "docs"))
+    footer = weak_coverage_contact(contact)
+    assert turn.reply.index("Confidence: Low") < turn.reply.index(footer)
+    assert turn.reply.count(contact) == 1
+
+
+def test_a_high_band_answer_has_no_escalation_contact(data_dir: Path, tmp_path: Path) -> None:
+    scripts = knowledge_scripts(
+        [call("search_policy", query=STRONG)],
+        [say_json(verdict_json((True, True), 0.9))],
+        "Within 30 days.",
+    )
+    (turn,) = world(scripts, data_dir, tmp_path).run("What is the return window?")
+    contact = escalation_contact(load_documents(data_dir / "docs"))
+    assert "Confidence: High" in turn.reply
+    assert contact not in turn.reply
 
 
 def test_a_product_answer_keeps_a_verified_diagram_and_strips_an_invented_one(

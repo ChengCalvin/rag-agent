@@ -29,8 +29,8 @@ SECURITY = [c for c in CASES if c.set_name == "security"]
 BY_ID = {c.case_id: c for c in CASES}
 
 
-def test_the_quality_set_has_15_to_18_cases() -> None:
-    assert 15 <= len(QUALITY) <= 18
+def test_the_quality_set_has_15_to_19_cases() -> None:
+    assert 15 <= len(QUALITY) <= 19
 
 
 def test_coverage_of_question_types_has_at_least_two_cases_of_each() -> None:

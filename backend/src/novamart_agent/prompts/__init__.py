@@ -15,6 +15,7 @@ from novamart_agent.prompts.canned import (
     no_answer_reply,
     not_determinable_reply,
     order_route_notes,
+    weak_coverage_contact,
 )
 from novamart_agent.prompts.composer import COMPOSER_INSTRUCTION
 from novamart_agent.prompts.intake import INTAKE_INSTRUCTION
@@ -38,5 +39,6 @@ __all__: list[str] = [
     "clarification_reply",
     "no_answer_reply",
     "not_determinable_reply",
+    "weak_coverage_contact",
     "order_route_notes",
 ]

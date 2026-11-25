@@ -5,7 +5,7 @@ Provides a repeatable, honest measure of whether the assistant answers correctly
 ## ADDED Requirements
 
 ### Requirement: Quality evaluation set
-The project SHALL include an evaluation set of 15 to 18 cases, each labelled with its persona and its question type: policy, product, order, combined (needs both), or refusal (unanswerable), and including exactly one case labelled with each refusal outcome A to E (A clarification, B decline, C no evidence, D order not found, E weak coverage with a Low band). Each case SHALL state the expected behavior and the checks that determine pass or fail.
+The project SHALL include an evaluation set of 15 to 19 cases, each labelled with its persona and its question type: policy, product, order, combined (needs both), or refusal (unanswerable), and including exactly one case labelled with each refusal outcome A to E (A clarification, B decline, C no evidence, D order not found, E weak coverage with a Low band). Each case SHALL state the expected behavior and the checks that determine pass or fail.
 
 #### Scenario: Coverage of question types
 - **WHEN** the evaluation set is inspected

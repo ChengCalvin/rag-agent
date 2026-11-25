@@ -29,6 +29,18 @@ def test_run_evals_without_a_key_returns_2_before_any_model_call(
     assert "Nothing was run" in capsys.readouterr().out
 
 
+def test_dry_run_estimates_without_a_key_and_makes_no_call(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    def boom(*_a: object, **_k: object) -> None:
+        raise AssertionError("a dry run reached the model path")
+
+    monkeypatch.setattr(run_evals, "load_settings", boom)
+    monkeypatch.setattr(run_evals, "run_all", boom)
+    assert asyncio.run(run_evals.main(["--dry-run", "--set", "security", "--max-cases", "4"])) == 0
+    assert "4 cases" in capsys.readouterr().out
+
+
 def test_adk_eval_commands_do_not_ask_for_detailed_results() -> None:
     for command in adk_commands(EVALS / "evalsets", Path("agent_dir"), None):
         assert "--print_detailed_results" not in command.argv
