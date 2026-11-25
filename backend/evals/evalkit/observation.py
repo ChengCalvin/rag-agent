@@ -8,7 +8,7 @@ leaked without printing it (ERR-2: results files must hold no personal data eith
 import re
 from dataclasses import dataclass
 
-from novamart_agent.pipeline import KIND_CHAT, TurnCost, UsageRecord
+from novamart_agent.pipeline import KIND_CHAT, Attempt, TurnCost, UsageRecord
 
 COST_LINE_PREFIX = "Cost:"
 _BAND = re.compile(r"^Confidence: (High|Medium|Low)\s*$", re.MULTILINE)
@@ -44,6 +44,7 @@ class TurnObservation:
     final_kind: str | None
     usage: tuple[UsageRecord, ...]
     cost: TurnCost
+    attempts: tuple[Attempt, ...] = ()
 
 
 @dataclass(frozen=True)

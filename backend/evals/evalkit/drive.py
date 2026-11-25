@@ -24,8 +24,10 @@ from evalkit.observation import Observation, SeededValue, TurnObservation
 from novamart_agent.agents import AgentModels, build_deps, build_orchestrator
 from novamart_agent.config import ModelPrice, Settings
 from novamart_agent.pipeline import (
+    STATE_ATTEMPTS,
     STATE_FINAL_KIND,
     STATE_USAGE,
+    attempts_from_state,
     compute_turn_cost,
     parse_usage_records,
 )
@@ -84,6 +86,7 @@ async def run_turn(
         final_kind=kind if isinstance(kind, str) else None,
         usage=usage,
         cost=compute_turn_cost(usage, prices),
+        attempts=attempts_from_state(state.get(STATE_ATTEMPTS)),
     )
 
 

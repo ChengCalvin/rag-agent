@@ -133,6 +133,7 @@ def attempt_to_state(attempt: Attempt) -> dict[str, object]:
         "required_uncovered": attempt.required_uncovered,
         "chunks": [_chunk_to_state(c) for c in attempt.chunks],
         "rewrite": attempt.rewrite,
+        "inputs": list(attempt.inputs),
     }
 
 
@@ -146,7 +147,16 @@ def attempt_from_state(raw: object) -> Attempt:
         _bool(data, "required_uncovered"),
         tuple(_chunk_from_state(c) for c in _list(data.get("chunks"), "chunks")),
         _opt_str(data, "rewrite"),
+        _inputs(data.get("inputs")),
     )
+
+
+def _inputs(raw: object) -> tuple[float, float, float]:
+    """The composite's three inputs; an older record without them reads as zeros."""
+    if not isinstance(raw, list) or len(raw) != 3:
+        return (0.0, 0.0, 0.0)
+    a, b, c = (float(v) for v in raw)
+    return (a, b, c)
 
 
 def attempts_to_state(attempts: Sequence[Attempt]) -> list[dict[str, object]]:

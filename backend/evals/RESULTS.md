@@ -32,16 +32,40 @@ incomplete: see "Not done" at the end.** Nothing here is a final pass rate for t
 
 Quota and server errors are infrastructure, not behaviour; they are listed but not diagnosed.
 
-## Threshold tuning (task 8.5, partly done)
+## Threshold tuning (task 8.5)
 
-Only the cosine threshold was varied, on the quality set. Raw top-3 scores of the case questions
-show why it cannot fix the main failure: the silent bulk-orders question scores **0.73**, above
-answerable questions such as the poisoned-document case (0.689), and the partially covered
-question scores 0.716 (expected: answered with Low band). Raising the threshold to 0.74 broke
-cases that passed at 0.6. Chosen default: **0.6, unchanged.**
+Run on `gemini-3.1-flash-lite`, 2026-11-24, synthetic data. Small sample: 9 cases reach the
+composite (7 answerable, 2 weak), so these defaults are a reasoned fit, not a statistical result.
 
-**Not tuned:** the loop-exit threshold T, the composite weights and the band thresholds. No run
-varied them.
+**Cosine threshold** (9 cases that reach retrieval, run at each value):
+
+| Threshold | Passed | What changed |
+|---|---|---|
+| 0.60 | 9/9 | baseline (full quality set: 19/19) |
+| 0.70 | 8/9 | bulk orders moved from E to C (a correct refusal, label mismatch only) |
+| 0.74 | 6/9 | tablet (the rewritten query scored under the cutoff), bulk orders and the partially covered warranty question became C |
+
+Probe scores (`probe_scores.py`): answerable questions 0.749 to 0.814; documents not covering
+the question 0.557 to 0.730. They overlap, so no cosine value separates them cleanly. **Chosen:
+0.60, unchanged.** The validator, the Low band and the caveat do the real filtering.
+
+**Composite weights, loop-exit T and band cut-offs** (replayed offline from the recorded inputs
+of the 0.60 run with `tune_confidence.py`; no extra model calls):
+
+| Setting | Before | After | Evidence |
+|---|---|---|---|
+| weights (coverage, score, llm) | 0.5, 0.3, 0.2 | **0.6, 0.2, 0.2** | answerable minimum 0.75 to 0.84, weak maximum 0.47 to 0.49; gap 0.29 to 0.35. Rubric coverage separates the two groups best; the normalised cosine score overlaps (answerable 0.18 to 0.60, weak 0.19 to 0.35), so it was cut, not removed |
+| loop-exit T | 0.70 | **0.65** | middle of the safe range (0.49, 0.84) |
+| band medium | 0.50 | **0.60** | the weak maximum was 0.47 to 0.49, a margin of at most 0.03 |
+| band high | 0.75 | 0.75 | all answerable first passes score 0.84 or more |
+
+Observed at the 0.60 run: all 7 answerable cases were High on the first pass (no retry). The 2
+weak cases were Low and used a second pass that did not help (bulk orders 0.06 to 0.06; partially
+covered 0.47 to 0.15), and best-attempt selection kept the better first pass.
+
+**Limits:** no recorded case landed in Medium, so the medium/high boundary is untested. The
+retry on weak cases costs one extra pass each; T could be raised to cut it, but T must stay under
+the answerable minimum. Re-check after the final run (10.1).
 
 ## Every failing case and diagnosis
 
@@ -96,7 +120,6 @@ trajectory matched.
 ## Not done
 
 - Validator agreement against a hand-labelled subset: **not measured** (no labels were made).
-- Tuning of T, weights and band thresholds (8.5).
 - `adk eval` for the remaining evalsets and the two that hit the quota.
 - Security set after the composer prompt change; security set at other thresholds.
 - Evals on the default model `gemini-3.6-flash`.

@@ -68,8 +68,8 @@ DEFAULT_PRICES: dict[str, ModelPrice] = {
 class ConfidenceWeights:
     """Weights of the three composite inputs (design D12). They must sum to 1."""
 
-    coverage: float = 0.5
-    score: float = 0.3
+    coverage: float = 0.6
+    score: float = 0.2
     llm: float = 0.2
 
     def __post_init__(self) -> None:
@@ -84,7 +84,7 @@ class ConfidenceWeights:
 class BandThresholds:
     """Composite at or above `high` is High, at or above `medium` is Medium, else Low."""
 
-    medium: float = 0.5
+    medium: float = 0.6
     high: float = 0.75
 
     def __post_init__(self) -> None:
@@ -97,7 +97,7 @@ class PipelineSettings:
     """Pipeline tuning values (ARCH-CFG-1, D11, D12). Defaults are build-time starting values,
     tuned on the eval set (task 8.5); they are configuration, not constants (CONV-1)."""
 
-    loop_exit_threshold: float = 0.7
+    loop_exit_threshold: float = 0.65
     weights: ConfidenceWeights = field(default_factory=ConfidenceWeights)
     bands: BandThresholds = field(default_factory=BandThresholds)
     max_iterations: int = 2

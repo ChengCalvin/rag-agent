@@ -27,6 +27,7 @@ class TurnMetrics:
     outcome: str | None
     message: str = ""
     reply: str = ""
+    attempts: tuple[tuple[int, float, str, bool, float, float, float], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -61,6 +62,10 @@ def turn_metrics(turn: TurnObservation, seeded: tuple[SeededValue, ...] = ()) ->
         outcome_of(turn),
         redact(turn.message, seeded),
         redact(turn.reply, seeded),
+        tuple(
+            (a.pass_number, a.composite, a.band.value, a.required_uncovered, *a.inputs)
+            for a in turn.attempts
+        ),
     )
 
 

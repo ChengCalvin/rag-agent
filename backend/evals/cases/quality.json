@@ -217,10 +217,10 @@
       ]
     },
     {
-      "id": "question-below-the-cosine-threshold-dress-code",
+      "id": "question-below-the-cosine-threshold-email-password",
       "set": "quality", "type": "refusal", "persona": "emp_store7", "refusal_outcome": "C",
       "scenario": "Question the documents are silent on",
-      "turns": ["What is the dress code for staff working on the shop floor?"],
+      "turns": ["How do I reset my email password?"],
       "expected": "Outcome C: canned no-evidence reply naming the escalation contact from the store operations document; no validator, no composer, no invented specifics.",
       "checks": [
         {"kind": "outcome_is", "outcome": "C"},

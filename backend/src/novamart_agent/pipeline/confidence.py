@@ -53,6 +53,7 @@ class Attempt:
     required_uncovered: bool
     chunks: tuple[RetrievedChunk, ...]
     rewrite: str | None
+    inputs: tuple[float, float, float] = (0.0, 0.0, 0.0)  # coverage, normalised score, llm
 
 
 @dataclass(frozen=True)
@@ -103,6 +104,11 @@ def make_attempt(evidence: PassEvidence, settings: PipelineSettings) -> Attempt:
         required_uncovered,
         evidence.chunks,
         evidence.rewrite,
+        (
+            evidence.assessment.coverage,
+            normalised_score(evidence.chunks, evidence.score_floor),
+            min(1.0, max(0.0, evidence.llm_confidence)),
+        ),
     )
 
 
