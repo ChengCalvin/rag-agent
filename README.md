@@ -238,9 +238,10 @@ In priority order:
 3. **Improve refusals.** Resolve the cases where restricted or uncovered topics match unrelated documents, for example by refusing in code when the validator finds no checklist item covered. Then test a reranker or combined keyword and vector search.
 4. **Answer combined questions in full** by running the order and policy paths and merging the results.
 5. **Reduce latency and calls.** Measure time per step, then see which steps can be merged or skipped on easy questions without lowering eval results.
-6. **Run independent work in parallel.** Today every step runs in sequence, with one retry loop. I would spend more time finding where agents and tool calls do not depend on each other and can run at the same time, such as a calendar call and an email call if those tools were added.
-7. **Build tools for each persona.** Give different personas their own tools, each with deterministic checks in code that run before anything is passed to the model.
-8. **Tidy the demo.** Make the reference date configurable and check this setup guide from a fresh clone.
+6. **Evaluate the right LLM for the job.** Run the same eval cases on different models, step by step, and compare quality, latency and cost. If a cheaper model holds up on a step, using it there would keep costs low.
+7. **Run independent work in parallel.** Today every step runs in sequence, with one retry loop. I would spend more time finding where agents and tool calls do not depend on each other and can run at the same time, such as a calendar call and an email call if those tools were added.
+8. **Build tools for each persona.** Give different personas their own tools, each with deterministic checks in code that run before anything is passed to the model.
+9. **Tidy the demo.** Make the reference date configurable and check this setup guide from a fresh clone.
 
 Moving to production is a separate piece of work, covered in the [production note](PRODUCTION_NOTE.md).
 
